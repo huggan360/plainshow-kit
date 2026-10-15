@@ -24,5 +24,8 @@
     },
     "config": {
         "sort-packages": true
-    }
+    },
+    "bin": [
+        "bin/check-type"
+    ]
 }

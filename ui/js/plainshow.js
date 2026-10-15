@@ -60,6 +60,18 @@
             event.preventDefault();
         }
 
+        var topnavToggle = target.closest('[data-ps-topnav-toggle]');
+        if (topnavToggle) {
+            var nav = topnavToggle.closest('.ps-topnav');
+            if (nav) {
+                var open = !nav.classList.contains('is-open');
+                nav.classList.toggle('is-open', open);
+                topnavToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+            event.preventDefault();
+            return;
+        }
+
         var shell = document.querySelector('.ps-shell');
         if (shell && target.closest('[data-ps-menu-toggle]')) {
             shell.classList.toggle('is-menu-open');
@@ -72,6 +84,7 @@
     document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape') return;
         closeAll(null);
+        document.querySelectorAll('.ps-topnav.is-open').forEach(function (nav) { nav.classList.remove('is-open'); });
         var shell = document.querySelector('.ps-shell.is-menu-open');
         if (shell) shell.classList.remove('is-menu-open');
     });

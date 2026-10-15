@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+// Fails when CSS sets a font size outside the PlainShow type scale.
+//   vendor/bin/check-type resources/css public/css ...
+// Icon rules (.bx, *icon*) may size glyphs freely.
+$bad = 0;
+$files = [];
+foreach (array_slice($argv, 1) as $path) {
+    if (is_dir($path)) {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS));
+        foreach ($iterator as $file) {
+            if (preg_match('/\.(css|scss)$/', $file->getFilename()) && !str_contains($file->getPathname(), '/vendor/')) {
+                $files[] = $file->getPathname();
+            }
+        }
+    } elseif (is_file($path)) {
+        $files[] = $path;
+    }
+}
+foreach ($files as $file) {
+    $css = (string) file_get_contents($file);
+    $css = preg_replace('#/\*.*?\*/#s', '', $css);
+    preg_match_all('/([^{}]+)\{([^{}]*)\}/', $css, $rules, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+    foreach ($rules as $rule) {
+        $selector = trim($rule[1][0]);
+        if (preg_match('/\.bx|icon|@font-face|svg/i', $selector)) {
+            continue;
+        }
+        if (preg_match_all('/font(?:-size)?\s*:\s*([^;]+)/', $rule[2][0], $declarations)) {
+            foreach ($declarations[1] as $value) {
+                if (preg_match('/\d(px|rem|em|pt)\b/', $value) && !str_contains($value, 'var(--ps-text-') && !preg_match('/^\d{3}\s/', trim($value)) ) {
+                    $line = substr_count(substr($css, 0, $rule[0][1]), "\n") + 1;
+                    echo "$file:$line  $selector  ->  $value\n";
+                    $bad++;
+                } elseif (preg_match('/^\d{3}\s+[\d.]+(px|rem)/', trim($value))) {
+                    $line = substr_count(substr($css, 0, $rule[0][1]), "\n") + 1;
+                    echo "$file:$line  $selector  ->  $value\n";
+                    $bad++;
+                }
+            }
+        }
+    }
+}
+if ($bad > 0) {
+    fwrite(STDERR, "$bad font sizes are outside the type scale. Use var(--ps-text-xs) to var(--ps-text-3xl).\n");
+    exit(1);
+}
+echo "Type scale: " . count($files) . " files clean.\n";

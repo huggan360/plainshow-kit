@@ -37,7 +37,9 @@ The app exposes `/auth/callback`, `/auth/logout` and `/auth/frontchannel`, each 
 
 - Boxes are an outer shell around an inner panel whose radius is the outer radius minus the padding (`.ps-frame` and `.ps-frame__panel`). Colours and spacing come from claude.ai/downloads.
 - Warm neutrals, with the PlainShow gradient reserved for emphasis.
-- `--ps-font-sans`, `--ps-font-serif` and `--ps-font-mono` are the only font settings. The defaults are free faces: Hanken Grotesk, Newsreader and IBM Plex Mono.
+- The serif (`--ps-font-text`, Newsreader) is the main face for reading, headings and navigation. The sans (`--ps-font-ui`, Hanken Grotesk) is only for small interface text: buttons, badges, labels, inputs, table headers. IBM Plex Mono is for code.
+- One type scale for every app: `--ps-text-xs` (12 px), `sm` (13.5), `md` (15.5, body), `lg` (17.5), `xl` (22), `2xl` (28), `3xl` (36), also as `.ps-text-*` classes. `vendor/bin/check-type <css dirs>` fails on any other font size.
+- Apps that navigate across the top (the blog) use `.ps-topnav`; apps with a sidebar use `.ps-shell`. `.ps-hero` keeps photo backgrounds legible.
 - The account menu and avatar come from the blog's original styling.
 - No middle dots in interface text.
 

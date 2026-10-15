@@ -179,7 +179,8 @@ body.ps, .ps-root {
 .ps-soft { color: var(--ps-text-soft); }
 .ps-faint { color: var(--ps-text-faint); }
 .ps-small { font-size: var(--ps-text-sm); }
-.ps-eyebrow { font-size: var(--ps-text-xs); font-weight: 600; color: var(--ps-accent-text); letter-spacing: .12em; text-transform: uppercase; }
+.ps-eyebrow { font-size: var(--ps-text-xs); font-weight: 600; color: var(--ps-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.ps-eyebrow--accent { color: var(--ps-accent-text); }
 :where(.ps) :focus-visible { outline: 2px solid var(--ps-focus); outline-offset: 2px; }
 .ps-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ps-gradient-text { color: transparent; background: var(--ps-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }

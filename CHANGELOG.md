@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Eyebrows are muted again; `.ps-eyebrow--accent` makes one orange.
+
 ## 0.3.0
 
 - New brand: the orange painted wordmark (`brand/plainshow-logo.webp`) and triangle mark (`brand/plainshow-icon.webp`), with new favicons. `.ps-brand__logo` and `.ps-brand__mark` replace the old icon and text wordmark.

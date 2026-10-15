@@ -36,8 +36,10 @@ The app exposes `/auth/callback`, `/auth/logout` and `/auth/frontchannel`, each 
 ## Design rules
 
 - Boxes are an outer shell around an inner panel whose radius is the outer radius minus the padding (`.ps-frame` and `.ps-frame__panel`). Colours and spacing come from claude.ai/downloads.
-- Warm neutrals, with the PlainShow gradient reserved for emphasis.
-- The serif (`--ps-font-text`, Newsreader) is the main face for reading, headings and navigation. The sans (`--ps-font-ui`, Hanken Grotesk) is only for small interface text: buttons, badges, labels, inputs, table headers. IBM Plex Mono is for code.
+- Warm neutrals with PlainShow orange (`--ps-accent`, #fc5000, from the logo) as the primary colour: primary buttons, focus, active navigation, meters and the gradient.
+- The painted wordmark (`brand/plainshow-logo.webp`, `.ps-brand__logo`) always stands alone, with no icon beside it. The triangle (`brand/plainshow-icon.webp`, `.ps-brand__mark`) is the small mark for tight spaces and favicons.
+- The serif (`--ps-font-text`, Source Serif 4) is the main face for reading, headings and navigation, set slightly heavier than regular. Outfit (`--ps-font-ui`) is the one secondary face, for interface text: buttons, badges, labels, inputs, table headers. Neither is used below its regular weight. IBM Plex Mono is for code.
+- Page titles sit on the page (`.ps-page-head__title`), not in the top bar.
 - One type scale for every app: `--ps-text-xs` (12 px), `sm` (13.5), `md` (15.5, body), `lg` (17.5), `xl` (22), `2xl` (28), `3xl` (36), also as `.ps-text-*` classes. `vendor/bin/check-type <css dirs>` fails on any other font size.
 - Apps that navigate across the top (the blog) use `.ps-topnav`; apps with a sidebar use `.ps-shell`. `.ps-hero` keeps photo backgrounds legible.
 - The account menu and avatar come from the blog's original styling.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- New brand: the orange painted wordmark (`brand/plainshow-logo.webp`) and triangle mark (`brand/plainshow-icon.webp`), with new favicons. `.ps-brand__logo` and `.ps-brand__mark` replace the old icon and text wordmark.
+- PlainShow orange (`--ps-accent`) is the primary colour. Primary buttons, focus rings, active navigation, tabs, loaders, meters and the gradient use it instead of blue and purple. `.ps-btn--light` keeps the white button.
+- Source Serif 4 replaces Newsreader as the main face. It sits centred next to icons and reads heavier; body text is set at weight 430.
+- Outfit replaces Hanken Grotesk as the secondary face.
+- `.ps-page-head__title`, `__text` and `__actions` for page titles on the page.
+
 ## 0.2.0
 
 - The serif is now the main face, including body text. The sans is kept for small interface text.

@@ -1,0 +1,6 @@
+/* Only loaded by the /design specimen, to compare typefaces before choosing. */
+@font-face { font-family: 'Candidate Hanken Grotesk'; src: url(../fonts/hanken-grotesk-latin-wght.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Candidate Geist'; src: url(../fonts/geist-latin-wght.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Candidate Instrument Sans'; src: url(../fonts/instrument-sans-latin-wght.woff2) format('woff2'); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: 'Candidate Newsreader'; src: url(../fonts/newsreader-latin-wght.woff2) format('woff2'); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: 'Candidate Source Serif 4'; src: url(../fonts/source-serif-4-latin-wght.woff2) format('woff2'); font-weight: 200 900; font-display: swap; }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Base element rules use `:where()`, so buttons styled on links keep their colours.
+
 ## 0.1.0
 
 - OIDC client with PKCE, state and nonce, and RS256 verification against the login service's JWKS.

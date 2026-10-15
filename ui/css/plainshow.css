@@ -128,9 +128,11 @@ body.ps, .ps-root {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
-.ps ::selection { background: rgba(109, 167, 236, .32); }
-.ps a { color: inherit; }
-.ps h1, .ps h2, .ps h3, .ps h4 { margin: 0; font-weight: 600; letter-spacing: -.01em; }
+:where(.ps) ::selection { background: rgba(109, 167, 236, .32); }
+/* :where() keeps base rules at zero specificity so component classes such as
+   .ps-btn--primary always win, including on links styled as buttons. */
+:where(.ps) a { color: inherit; }
+:where(.ps) :where(h1, h2, h3, h4) { margin: 0; font-weight: 600; letter-spacing: -.01em; }
 .ps-serif { font-family: var(--ps-font-serif); font-weight: 400; letter-spacing: -.012em; }
 .ps-mono { font-family: var(--ps-font-mono); }
 .ps-title { font-family: var(--ps-font-serif); font-weight: 400; font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.4rem); line-height: 1.15; letter-spacing: -.015em; }
@@ -140,7 +142,7 @@ body.ps, .ps-root {
 .ps-faint { color: var(--ps-text-faint); }
 .ps-small { font-size: .8125rem; }
 .ps-eyebrow { font-size: .6875rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ps-text-muted); }
-.ps :focus-visible { outline: 2px solid var(--ps-focus); outline-offset: 2px; }
+:where(.ps) :focus-visible { outline: 2px solid var(--ps-focus); outline-offset: 2px; }
 .ps-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ps-gradient-text { color: transparent; background: var(--ps-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 

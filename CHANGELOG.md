@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- `Signed`: requests one PlainShow app makes to another on someone's behalf (the API gateway, personal API tokens), signed over method, path, time, person, context and body. `Signed::identity` turns a verified request into an `Identity`.
+
 ## 0.5.1
 
 - Security: wildcard rules such as `*.view` no longer match core's own capabilities. Before this, the default member and guest rules granted `core.audit.view` and `core.system.view`, so they could read the audit log. Core capabilities are now granted by name only.

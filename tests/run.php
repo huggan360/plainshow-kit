@@ -16,6 +16,7 @@ use PlainShow\Kit\Jwks;
 use PlainShow\Kit\Jwt;
 use PlainShow\Kit\KitException;
 use PlainShow\Kit\OidcClient;
+use PlainShow\Kit\Signed;
 
 $checks = 0;
 function check(bool $condition, string $message): void
@@ -108,5 +109,18 @@ foreach ([[$signed, 'other', 'secret', 1030], [$signed, 'latest-posts', 'wrong',
         check(true, 'Bad widget request is refused');
     }
 }
+
+// Signed requests between apps
+$h = Signed::headers('post', '/api/v1/posts?x=1', '{"a":1}', 6, ['ps_role' => 'admin', 'ps_caps' => ['*'], 'scopes' => ['blog']], 'shh', 1000);
+$server = ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => '/api/v1/posts?x=1'];
+foreach ($h as $name => $value) { $server['HTTP_' . strtoupper(str_replace('-', '_', $name))] = $value; }
+check(Signed::present($server), 'Signed request is detected');
+$v = Signed::verify($server, '{"a":1}', 'shh', 1050);
+check($v['user'] === 6 && Signed::scopes($v) === ['blog'] && Signed::identity($v)->can('anything'), 'Signed request verifies and carries context');
+throws(fn () => Signed::verify($server, '{"a":2}', 'shh', 1050), 'Changed body is refused');
+throws(fn () => Signed::verify(['REQUEST_URI' => '/api/v1/other'] + $server, '{"a":1}', 'shh', 1050), 'Changed path is refused');
+throws(fn () => Signed::verify($server, '{"a":1}', 'other', 1050), 'Wrong secret is refused');
+throws(fn () => Signed::verify($server, '{"a":1}', 'shh', 1500), 'Old signed request is refused');
+throws(fn () => Signed::verify(['HTTP_X_PLAINSHOW_USER' => '7'] + $server, '{"a":1}', 'shh', 1050), 'Changed user is refused');
 
 echo "Kit checks passed: $checks\n";

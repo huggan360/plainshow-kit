@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- Outfit is now the face for all text (`--ps-font-text`). The serif moves to titles and smaller titles through `--ps-font-title`: headings, page, frame, modal and widget titles, `.ps-title` and `.ps-heading`. `.ps-reading` and `.ps-serif` keep the serif for long reading text such as blog posts.
+
 ## 0.4.0
 
 - `Widgets::sign` and `Widgets::verify`: core asks extensions for dashboard widget data with a signed, short-lived request naming the person.

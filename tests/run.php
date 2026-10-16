@@ -123,4 +123,11 @@ throws(fn () => Signed::verify($server, '{"a":1}', 'other', 1050), 'Wrong secret
 throws(fn () => Signed::verify($server, '{"a":1}', 'shh', 1500), 'Old signed request is refused');
 throws(fn () => Signed::verify(['HTTP_X_PLAINSHOW_USER' => '7'] + $server, '{"a":1}', 'shh', 1050), 'Changed user is refused');
 
+// OpenAPI from routes
+$spec = PlainShow\Kit\OpenApi::build([['method' => 'GET', 'path' => '/health', 'capability' => null], ['method' => 'POST', 'path' => '/things/{id}', 'capability' => 'x.thing.create'], ['method' => 'GET', 'path' => '/widgets/a', 'capability' => null]],
+    ['POST /things/{id}' => ['summary' => 'Change a thing', 'body' => ['name' => ['string', 'The name', true]]]], ['title' => 'T', 'version' => '1'], 'https://example.test/api');
+check($spec['paths']['/health']['get']['security'] === [] && $spec['paths']['/things/{id}']['post']['x-capability'] === 'x.thing.create', 'OpenAPI marks public routes and capabilities');
+check($spec['paths']['/things/{id}']['post']['parameters'][0]['name'] === 'id' && $spec['paths']['/things/{id}']['post']['requestBody']['content']['application/json']['schema']['required'] === ['name'], 'OpenAPI has path parameters and bodies');
+check(($spec['paths']['/widgets/a']['get']['x-internal'] ?? false) === true, 'Widget routes are internal');
+
 echo "Kit checks passed: $checks\n";

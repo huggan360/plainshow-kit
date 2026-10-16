@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- `OpenApi::build`: an extension's API as OpenAPI 3.1, from its router's routes and short notes. Used by plainshow.se/api.
+
 ## 0.6.0
 
 - `Signed`: requests one PlainShow app makes to another on someone's behalf (the API gateway, personal API tokens), signed over method, path, time, person, context and body. `Signed::identity` turns a verified request into an `Identity`.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Gauges draw their fill again; labels stay on one line.
+
 ## 1.1.0
 
 - Backdrop (`js/backdrop.js`, `.ps-backdrop`): the sidebar's glyphs scattered over the page, a shade off the background, with two orange lights drifting across that light them up and quicken a little when the pointer moves. Still for reduced motion.

@@ -664,7 +664,7 @@ a.ps-chain__item:hover { background: var(--ps-btn-bg-hover); }
 .ps-chain > .ps-gauge:first-child .ps-gauge__fill { border-radius: calc(var(--ps-cap) - 4px) var(--ps-join) var(--ps-join) var(--ps-join); }
 .ps-chain > .ps-gauge:last-child .ps-gauge__fill { border-radius: var(--ps-join) var(--ps-join) var(--ps-join) calc(var(--ps-cap) - 4px); }
 .ps-chain > .ps-gauge:only-child .ps-gauge__fill { border-radius: calc(var(--ps-cap) - 4px); }
-.ps-gauge > span { position: relative; }
+.ps-gauge > span:not(.ps-gauge__fill) { position: relative; white-space: nowrap; }
 .ps-gauge--red { --ps-gauge: #ef4444; --ps-gauge-track: #fecaca; }
 .ps-gauge--orange { --ps-gauge: #f97316; --ps-gauge-track: #fed7aa; }
 .ps-gauge--yellow { --ps-gauge: #eab308; --ps-gauge-track: #fef08a; }

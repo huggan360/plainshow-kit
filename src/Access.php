@@ -96,6 +96,11 @@ final class Access
             $regex = '/^' . str_replace('\*', '[a-z0-9_-]+', preg_quote($pattern, '/')) . '$/';
             $prefix = str_ends_with($pattern, '.*') ? substr($pattern, 0, -1) : null;
             foreach ($known as $name) {
+                // Rules that start with a wildcard never reach core's own
+                // capabilities: those run the platform and are granted by name.
+                if (str_starts_with($pattern, '*') && str_starts_with($name, 'core.')) {
+                    continue;
+                }
                 // `*.moderate` matches `blog.post.moderate`; `blog.*` matches all of blog.
                 if (preg_match($regex, $name) || ($prefix !== null && str_starts_with($name, $prefix)) || self::suffixMatch($pattern, $name)) {
                     $result[] = $name;

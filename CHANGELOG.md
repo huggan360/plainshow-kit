@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Security: wildcard rules such as `*.view` no longer match core's own capabilities. Before this, the default member and guest rules granted `core.audit.view` and `core.system.view`, so they could read the audit log. Core capabilities are now granted by name only.
+
 ## 0.5.0
 
 - Outfit is now the face for all text (`--ps-font-text`). The serif moves to titles and smaller titles through `--ps-font-title`: headings, page, frame, modal and widget titles, `.ps-title` and `.ps-heading`. `.ps-reading` and `.ps-serif` keep the serif for long reading text such as blog posts.

@@ -92,6 +92,7 @@ check($moderator['capabilities'] === [], 'Capabilities of an unusable service ar
 $known = ['blog.post.create', 'blog.post.moderate', 'blog.comment.moderate', 'latex.project.create', 'core.users.manage'];
 check(Access::expand(['*.moderate'], $known) === ['blog.post.moderate', 'blog.comment.moderate'], 'Suffix pattern expands');
 check(Access::expand(['blog.*'], $known) === ['blog.post.create', 'blog.post.moderate', 'blog.comment.moderate'], 'Prefix pattern expands');
+check(Access::expand(['*.view', 'core.dashboard.use'], ['core.audit.view', 'core.system.view', 'blog.post.view', 'core.dashboard.use']) === ['blog.post.view', 'core.dashboard.use'], 'Wildcards never reach core capabilities');
 
 $identity = new Identity(['sub' => '3', 'ps_caps' => ['blog.*'], 'ps_services' => ['blog'], 'given_name' => 'Hugo', 'family_name' => 'Hansson']);
 check($identity->can('blog.post.moderate') && !$identity->can('latex.project.create'), 'Identity capability wildcard');

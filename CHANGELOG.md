@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- `PhpSessionAuth::trySilentSignIn()`: on a public page, ask the login service once, invisibly (`prompt=none`), whether the person is signed in there; they come back signed in or as a guest. At most every ten minutes, and only for real page loads.
+
 ## 1.1.1
 
 - Gauges draw their fill again; labels stay on one line.

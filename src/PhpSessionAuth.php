@@ -17,6 +17,7 @@ final class PhpSessionAuth
 {
     private const KEY = 'ps_identity';
     private const LOGIN_AT = 'ps_login_at';
+    private const SILENT_AT = 'ps_silent_at';
 
     private readonly OidcClient $client;
     /** @var callable(Identity): void|null */
@@ -71,11 +72,37 @@ final class PhpSessionAuth
         $this->redirect($this->client->authorizationUrl($_SESSION, $this->currentPath()));
     }
 
+    /**
+     * On a public page: if nobody is signed in here, ask the login service
+     * once, without showing anything, whether they are signed in there.
+     * They come back signed in, or come back as a guest. Only for page loads
+     * a person makes (not scripts, crawlers or embedded frames), and at most
+     * once every ten minutes per browser.
+     */
+    public function trySilentSignIn(): void
+    {
+        if ($this->user() !== null || ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
+            return;
+        }
+        if (($_SERVER['HTTP_SEC_FETCH_MODE'] ?? '') !== 'navigate' || ($_SERVER['HTTP_SEC_FETCH_DEST'] ?? '') !== 'document') {
+            return;
+        }
+        if (($_SESSION[self::SILENT_AT] ?? 0) > time() - 600 || isset($_COOKIE['ps_silent'])) {
+            return;
+        }
+        $_SESSION[self::SILENT_AT] = time();
+        setcookie('ps_silent', '1', ['expires' => time() + 600, 'path' => '/', 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
+        $this->redirect($this->client->authorizationUrl($_SESSION, $this->currentPath(), ['prompt' => 'none']));
+    }
+
     public function handleCallback(): never
     {
         try {
             $result = $this->client->handleCallback($_SESSION, $_GET);
         } catch (KitException $error) {
+            if ($error->getCode() === 401) {
+                $this->redirect(OidcClient::safeReturnPath($error->getMessage()));
+            }
             $this->deny($error->getMessage(), $error->getCode() === 403 ? 403 : 400);
         }
 

@@ -45,7 +45,7 @@ final class OidcClient
             (array) ($session['ps_oidc'] ?? []),
             fn ($entry) => is_array($entry) && ($entry['at'] ?? 0) > time() - self::PENDING_TTL,
         );
-        $pending[$state] = ['nonce' => $nonce, 'verifier' => $verifier, 'return' => $returnTo, 'at' => time()];
+        $pending[$state] = ['nonce' => $nonce, 'verifier' => $verifier, 'return' => $returnTo, 'at' => time(), 'silent' => ($extra['prompt'] ?? null) === 'none'];
         $session['ps_oidc'] = array_slice($pending, -self::PENDING_LIMIT, null, true);
 
         return $this->endpoint('/oauth/authorize') . '?' . http_build_query([
@@ -76,6 +76,10 @@ final class OidcClient
             throw new KitException('This sign-in link has expired. Please try again.', 400);
         }
         if (isset($query['error'])) {
+            // A silent check that found nobody signed in is not a failure: go back quietly.
+            if (!empty($pending['silent']) && in_array($query['error'], ['login_required', 'interaction_required', 'consent_required', 'account_selection_required', 'access_denied'], true)) {
+                throw new KitException((string) $pending['return'], 401);
+            }
             throw new KitException((string) ($query['error_description'] ?? $query['error']), 403);
         }
         if (!is_string($query['code'] ?? null) || $query['code'] === '') {

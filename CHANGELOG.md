@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Clearer glass: a lighter blur and a more see-through panel, so the backdrop reads through every frame.
+
 ## 1.3.0
 
 - Frames are glass all the way through: the shell is more see-through and blurs the backdrop, and the panel is slightly see-through so the blur shows across the whole box. Solid boxes where the browser cannot blur.

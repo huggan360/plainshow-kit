@@ -207,9 +207,9 @@ body.ps, .ps-root {
        blur inside a blur cannot see the page in Chrome or Firefox), and the
        panel is a little see-through, so the blurred backdrop shows across
        the whole box. Both prefixes, for Safari, Chrome and Firefox 103+. */
-    background: color-mix(in srgb, var(--ps-shell) 42%, transparent);
-    -webkit-backdrop-filter: blur(18px) saturate(1.25);
-    backdrop-filter: blur(18px) saturate(1.25);
+    background: color-mix(in srgb, var(--ps-shell) 34%, transparent);
+    -webkit-backdrop-filter: blur(9px) saturate(1.3);
+    backdrop-filter: blur(9px) saturate(1.3);
     min-width: 0;
 }
 .ps-frame__panel {
@@ -218,7 +218,7 @@ body.ps, .ps-root {
     padding: 28px;
     border: 1px solid var(--ps-panel-border);
     border-radius: calc(var(--ps-frame-radius) - var(--ps-frame-pad));
-    background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), color-mix(in srgb, var(--ps-panel) 80%, transparent);
+    background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), color-mix(in srgb, var(--ps-panel) 70%, transparent);
     overflow: hidden;
     min-width: 0;
 }

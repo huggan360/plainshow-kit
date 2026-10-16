@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- First stable release, for PlainShow 1.0. Nothing changed since 0.7.0; apps require `^1.0` from here.
+
 ## 0.7.0
 
 - `OpenApi::build`: an extension's API as OpenAPI 3.1, from its router's routes and short notes. Used by plainshow.se/api.

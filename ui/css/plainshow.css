@@ -203,10 +203,13 @@ body.ps, .ps-root {
     padding: var(--ps-frame-pad);
     border: 1px solid var(--ps-shell-border);
     border-radius: var(--ps-frame-radius);
-    /* The outer shell is frosted glass: the backdrop shows through, blurred. */
-    background: color-mix(in srgb, var(--ps-shell) 58%, transparent);
-    -webkit-backdrop-filter: blur(16px) saturate(1.15);
-    backdrop-filter: blur(16px) saturate(1.15);
+    /* Frosted glass. The shell blurs what is behind it (one blur only: a
+       blur inside a blur cannot see the page in Chrome or Firefox), and the
+       panel is a little see-through, so the blurred backdrop shows across
+       the whole box. Both prefixes, for Safari, Chrome and Firefox 103+. */
+    background: color-mix(in srgb, var(--ps-shell) 42%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    backdrop-filter: blur(18px) saturate(1.25);
     min-width: 0;
 }
 .ps-frame__panel {
@@ -215,7 +218,7 @@ body.ps, .ps-root {
     padding: 28px;
     border: 1px solid var(--ps-panel-border);
     border-radius: calc(var(--ps-frame-radius) - var(--ps-frame-pad));
-    background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), var(--ps-panel);
+    background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), color-mix(in srgb, var(--ps-panel) 80%, transparent);
     overflow: hidden;
     min-width: 0;
 }
@@ -670,3 +673,8 @@ a.ps-chain__item:hover { background: var(--ps-btn-bg-hover); }
 .ps-gauge--yellow { --ps-gauge: #eab308; --ps-gauge-track: #fef08a; }
 .ps-gauge--green { --ps-gauge: #22c55e; --ps-gauge-track: #bbf7d0; }
 .ps-gauge--blue { --ps-gauge: #3b82f6; --ps-gauge-track: #bfdbfe; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .ps-frame { background: var(--ps-shell); }
+    .ps-frame__panel { background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), var(--ps-panel); }
+}

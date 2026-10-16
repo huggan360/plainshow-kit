@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+- Frames are glass all the way through: the shell is more see-through and blurs the backdrop, and the panel is slightly see-through so the blur shows across the whole box. Solid boxes where the browser cannot blur.
+
 ## 1.2.0
 
 - `PhpSessionAuth::trySilentSignIn()`: on a public page, ask the login service once, invisibly (`prompt=none`), whether the person is signed in there; they come back signed in or as a guest. At most every ten minutes, and only for real page loads.

@@ -203,7 +203,10 @@ body.ps, .ps-root {
     padding: var(--ps-frame-pad);
     border: 1px solid var(--ps-shell-border);
     border-radius: var(--ps-frame-radius);
-    background: var(--ps-shell);
+    /* The outer shell is frosted glass: the backdrop shows through, blurred. */
+    background: color-mix(in srgb, var(--ps-shell) 58%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
     min-width: 0;
 }
 .ps-frame__panel {
@@ -394,7 +397,9 @@ a.ps-row:hover .ps-row__title { color: var(--ps-text); text-decoration: underlin
 .ps-shell { min-height: 100vh; display: grid; grid-template-columns: var(--ps-sidebar) minmax(0, 1fr); }
 .ps-sidebar {
     position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
-    padding: 18px 12px 14px; background: var(--ps-bg); border-right: 1px solid var(--ps-line); overflow-y: auto;
+    padding: 18px 12px 14px; border-right: 1px solid var(--ps-line); overflow-y: auto;
+    background: color-mix(in srgb, var(--ps-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
 }
 .ps-sidebar__brand { padding: 4px 10px 22px; }
 .ps-sidebar__section { margin-top: 18px; }
@@ -433,7 +438,7 @@ a.ps-row:hover .ps-row__title { color: var(--ps-text); text-decoration: underlin
 .ps-menu-toggle { display: none; }
 @media (max-width: 991px) {
     .ps-shell { grid-template-columns: minmax(0, 1fr); }
-    .ps-sidebar { position: fixed; z-index: 70; inset: 0 auto 0 0; width: min(300px, 86vw); transform: translateX(-102%); transition: transform .22s ease; box-shadow: var(--ps-shadow); }
+    .ps-sidebar { position: fixed; z-index: 70; inset: 0 auto 0 0; width: min(300px, 86vw); transform: translateX(-102%); transition: transform .22s ease; box-shadow: var(--ps-shadow); background: var(--ps-bg); }
     .ps-shell.is-menu-open .ps-sidebar { transform: none; }
     .ps-shell.is-menu-open::after { content: ''; position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .55); }
     .ps-menu-toggle { display: inline-flex; }
@@ -615,3 +620,53 @@ a.ps-row:hover .ps-row__title { color: var(--ps-text); text-decoration: underlin
 @media (prefers-reduced-motion: reduce) {
     .ps *, .ps *::before, .ps *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* ---------- Backdrop: glyphs and drifting lights (js/backdrop.js) ---------- */
+.ps-backdrop { position: fixed; inset: 0; z-index: -1; width: 100vw; height: 100vh; pointer-events: none; }
+
+/* ---------- The person, at the foot of the sidebar ----------
+   Like PlainShow Web: avatar, name and username; the menu opens upwards. */
+.ps-me { position: relative; margin-top: 8px; }
+.ps-me__button {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px;
+    border: 1px solid var(--ps-shell-border); border-radius: 14px; background: color-mix(in srgb, var(--ps-shell) 70%, transparent);
+    color: var(--ps-text); text-align: left; font: inherit; cursor: pointer; transition: background-color .15s ease;
+}
+.ps-me__button:hover, .ps-me.is-open .ps-me__button { background: var(--ps-hover); }
+.ps-me__text { display: grid; flex: 1; min-width: 0; line-height: 1.3; }
+.ps-me__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: var(--ps-text-sm); }
+.ps-me__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ps-text-muted); font-size: var(--ps-text-xs); }
+.ps-me__chevron { color: var(--ps-text-faint); font-size: 1.1rem; }
+.ps-dropdown__menu--up { top: auto; bottom: calc(100% + 8px); left: 0; right: 0; min-width: 0; }
+
+/* The service switcher in the top bar. */
+.ps-switcher__trigger .bx { font-size: 1.45rem; }
+
+/* ---------- Chain: rows that share a box ----------
+   Rows sit close together with small corners; the first and last take the
+   rounder corners of the box around them, as on PlainShow Web. */
+.ps-chain { --ps-join: 5px; --ps-cap: 14px; display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
+.ps-chain > * { border-radius: var(--ps-join); background: var(--ps-raised); }
+.ps-chain > :first-child { border-top-left-radius: var(--ps-cap); border-top-right-radius: var(--ps-cap); }
+.ps-chain > :last-child { border-bottom-left-radius: var(--ps-cap); border-bottom-right-radius: var(--ps-cap); }
+.ps-chain--row { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+.ps-chain--row > * { border-radius: var(--ps-join); }
+.ps-chain--row > :first-child { border-radius: var(--ps-join); border-top-left-radius: var(--ps-cap); border-bottom-left-radius: var(--ps-cap); }
+.ps-chain--row > :last-child { border-radius: var(--ps-join); border-top-right-radius: var(--ps-cap); border-bottom-right-radius: var(--ps-cap); }
+.ps-chain--row > :only-child { border-radius: var(--ps-cap); }
+a.ps-chain__item, .ps-chain__item--link { color: inherit; text-decoration: none; transition: background-color .15s ease; }
+a.ps-chain__item:hover { background: var(--ps-btn-bg-hover); }
+
+/* ---------- Gauge: a filled bar with its label, as on PlainShow Web ---------- */
+.ps-gauge { --ps-gauge: #ef4444; --ps-gauge-track: #fecaca; position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 0 14px; overflow: hidden; background: var(--ps-gauge-track) !important; color: #2a0f06; font: 600 var(--ps-text-xs)/1 var(--ps-font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.ps-gauge__fill { position: absolute; inset: 4px auto 4px 4px; width: calc(var(--value, 0) * (100% - 8px) / 100); min-width: 10px; border-radius: inherit; background: var(--ps-gauge); transition: width .6s ease; }
+.ps-chain > .ps-gauge:first-child .ps-gauge__fill { border-radius: calc(var(--ps-cap) - 4px) var(--ps-join) var(--ps-join) var(--ps-join); }
+.ps-chain > .ps-gauge:last-child .ps-gauge__fill { border-radius: var(--ps-join) var(--ps-join) var(--ps-join) calc(var(--ps-cap) - 4px); }
+.ps-chain > .ps-gauge:only-child .ps-gauge__fill { border-radius: calc(var(--ps-cap) - 4px); }
+.ps-gauge > span { position: relative; }
+.ps-gauge--red { --ps-gauge: #ef4444; --ps-gauge-track: #fecaca; }
+.ps-gauge--orange { --ps-gauge: #f97316; --ps-gauge-track: #fed7aa; }
+.ps-gauge--yellow { --ps-gauge: #eab308; --ps-gauge-track: #fef08a; }
+.ps-gauge--green { --ps-gauge: #22c55e; --ps-gauge-track: #bbf7d0; }
+.ps-gauge--blue { --ps-gauge: #3b82f6; --ps-gauge-track: #bfdbfe; }

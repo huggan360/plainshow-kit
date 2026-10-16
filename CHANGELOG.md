@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0
+
+- Backdrop (`js/backdrop.js`, `.ps-backdrop`): the sidebar's glyphs scattered over the page, a shade off the background, with two orange lights drifting across that light them up and quicken a little when the pointer moves. Still for reduced motion.
+- Frames are frosted glass: the outer shell is see-through and blurs the backdrop. The sidebar too.
+- `.ps-me`: the person at the foot of the sidebar, with a menu that opens upwards (`.ps-dropdown__menu--up`).
+- `.ps-chain`: rows that share a box, small inner corners and rounder outer ones; `--row` for side by side.
+- `.ps-gauge`: a filled bar with its label, in red, orange, yellow, green or blue.
+- `.ps-switcher__trigger`: a larger service switcher icon.
+
 ## 1.0.0
 
 - First stable release, for PlainShow 1.0. Nothing changed since 0.7.0; apps require `^1.0` from here.

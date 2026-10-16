@@ -97,4 +97,15 @@ $identity = new Identity(['sub' => '3', 'ps_caps' => ['blog.*'], 'ps_services' =
 check($identity->can('blog.post.moderate') && !$identity->can('latex.project.create'), 'Identity capability wildcard');
 check($identity->initials() === 'HH', 'Initials from name');
 
+$signed = \PlainShow\Kit\Widgets::sign(7, 'latest-posts', 'secret', 1000);
+check(\PlainShow\Kit\Widgets::verify($signed, 'latest-posts', 'secret', 1030) === 7, 'Widget request verifies');
+foreach ([[$signed, 'other', 'secret', 1030], [$signed, 'latest-posts', 'wrong', 1030], [$signed, 'latest-posts', 'secret', 1100], [['user' => 8] + $signed, 'latest-posts', 'secret', 1030]] as [$query, $widget, $secret, $now]) {
+    try {
+        \PlainShow\Kit\Widgets::verify($query, $widget, $secret, $now);
+        check(false, 'Bad widget request is refused');
+    } catch (\PlainShow\Kit\KitException) {
+        check(true, 'Bad widget request is refused');
+    }
+}
+
 echo "Kit checks passed: $checks\n";

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- `Widgets::sign` and `Widgets::verify`: core asks extensions for dashboard widget data with a signed, short-lived request naming the person.
+
 ## 0.3.1
 
 - Eyebrows are muted again; `.ps-eyebrow--accent` makes one orange.

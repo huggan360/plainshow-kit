@@ -101,6 +101,12 @@ check($identity->initials() === 'HH', 'Initials from name');
 
 $signed = \PlainShow\Kit\Widgets::sign(7, 'latest-posts', 'secret', 1000);
 check(\PlainShow\Kit\Widgets::verify($signed, 'latest-posts', 'secret', 1030) === 7, 'Widget request verifies');
+check($signed['sig'] === hash_hmac('sha256', '7|latest-posts|1000', 'secret'), 'Widget signature without an account is unchanged');
+$withAccount = \PlainShow\Kit\Widgets::sign(7, 'files', 'secret', 1000, 'hugo');
+check(\PlainShow\Kit\Widgets::verifyWithAccount($withAccount, 'files', 'secret', 1030) === ['user' => 7, 'account' => 'hugo'], 'Widget request carries a signed account');
+check(\PlainShow\Kit\Widgets::verifyWithAccount($signed, 'latest-posts', 'secret', 1030)['account'] === null, 'No account when none was sent');
+throws(fn () => \PlainShow\Kit\Widgets::verify(['account' => 'admin'] + $withAccount, 'files', 'secret', 1030), 'A changed account is rejected');
+throws(fn () => \PlainShow\Kit\Widgets::verify(array_diff_key($withAccount, ['account' => 1]), 'files', 'secret', 1030), 'A dropped account is rejected');
 foreach ([[$signed, 'other', 'secret', 1030], [$signed, 'latest-posts', 'wrong', 1030], [$signed, 'latest-posts', 'secret', 1100], [['user' => 8] + $signed, 'latest-posts', 'secret', 1030]] as [$query, $widget, $secret, $now]) {
     try {
         \PlainShow\Kit\Widgets::verify($query, $widget, $secret, $now);

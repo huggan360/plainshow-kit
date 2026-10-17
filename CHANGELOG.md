@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+- Widget requests can name the person's own account in the extension (`Widgets::sign(..., account: ...)`, `Widgets::verifyWithAccount`), signed with the rest. Requests without one are signed exactly as before.
+
 ## 1.3.1
 
 - Clearer glass: a lighter blur and a more see-through panel, so the backdrop reads through every frame.

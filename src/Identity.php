@@ -22,7 +22,7 @@ final class Identity
     public function name(): string { return trim((string) ($this->claims['name'] ?? ($this->firstName() . ' ' . $this->lastName()))) ?: $this->username(); }
     public function email(): ?string { return isset($this->claims['email']) ? (string) $this->claims['email'] : null; }
     public function picture(): ?string { return isset($this->claims['picture']) ? (string) $this->claims['picture'] : null; }
-    public function role(): string { return (string) ($this->claims['ps_role'] ?? 'member'); }
+    public function role(): string { return (string) ($this->claims['ps_role'] ?? 'user'); }
     public function piUser(): ?string { return isset($this->claims['ps_pi_user']) ? (string) $this->claims['ps_pi_user'] : null; }
     public function isAdmin(): bool { return $this->role() === 'admin'; }
     public function isModerator(): bool { return in_array($this->role(), ['admin', 'moderator'], true); }

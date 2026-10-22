@@ -19,8 +19,6 @@ namespace PlainShow\Kit;
  */
 final class Access
 {
-    public const ROLES = ['admin', 'moderator', 'member', 'guest'];
-
     /**
      * @param list<array{id: string, enabled: bool, default_access: list<string>}> $extensions
      * @param array<string, string> $accessOverrides extension id => allow|deny
@@ -30,7 +28,7 @@ final class Access
      */
     public static function resolve(string $role, array $extensions, array $accessOverrides, array $rolePatterns, array $capabilityOverrides): array
     {
-        $role = in_array($role, self::ROLES, true) ? $role : 'guest';
+        $role = trim($role) !== '' ? $role : 'guest';
         $services = [];
         foreach ($extensions as $extension) {
             if (!$extension['enabled']) {
@@ -76,7 +74,7 @@ final class Access
         return [
             'admin' => ['*'],
             'moderator' => ['core.dashboard.use', '*.view', '*.create', '*.moderate'],
-            'member' => ['core.dashboard.use', '*.view', '*.create'],
+            'user' => ['core.dashboard.use', '*.view', '*.create'],
             'guest' => ['core.dashboard.use', '*.view'],
         ];
     }

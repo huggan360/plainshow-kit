@@ -28,10 +28,11 @@ p{margin:0 0 20px;color:var(--soft)}
 <main>
 <img src="/_errors/429.webp" alt="" width="260" height="260">
 <p class="code">429</p>
-<h1>Slow down</h1>
-<p>That was a lot of requests in a short time. Wait a minute and try again.</p>
-<div class="actions"><a class="btn" href="javascript:history.back()">Go back</a><a class="btn primary" href="/">Start page</a></div>
+<h1 data-k="title">Slow down</h1>
+<p data-k="text">That was a lot of requests in a short time. Wait a minute and try again.</p>
+<div class="actions"><a class="btn" href="javascript:history.back()" data-k="back">Go back</a><a class="btn primary" href="/" data-k="home">Start page</a></div>
 </main>
+<script>(function(){var w={"nl":{"title":"Rustig aan","text":"Dat waren veel verzoeken in korte tijd. Wacht een minuut en probeer het opnieuw.","back":"Terug","home":"Startpagina","soon":"Meestal binnen een minuut."},"sv":{"title":"Ta det lugnt","text":"Det var många förfrågningar på kort tid. Vänta en minut och försök igen.","back":"Tillbaka","home":"Startsidan","soon":"Oftast inom en minut."}};var m=document.cookie.match(/(?:^|; )ps_lang=([a-z]+)/);var l=m?m[1]:null;if(!w[l]&&l!=='en'){var a=navigator.languages||[navigator.language||'en'];for(var i=0;i<a.length;i++){var c=String(a[i]).slice(0,2).toLowerCase();if(w[c]||c==='en'){l=c;break;}}}var t=w[l];if(!t)return;document.documentElement.lang=l;document.querySelectorAll('[data-k]').forEach(function(n){var k=n.getAttribute('data-k');if(t[k])n.textContent=t[k];});document.title=t.title+' | PlainShow';})();</script>
 
 </body>
 </html>

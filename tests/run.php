@@ -136,4 +136,18 @@ check($spec['paths']['/health']['get']['security'] === [] && $spec['paths']['/th
 check($spec['paths']['/things/{id}']['post']['parameters'][0]['name'] === 'id' && $spec['paths']['/things/{id}']['post']['requestBody']['content']['application/json']['schema']['required'] === ['name'], 'OpenAPI has path parameters and bodies');
 check(($spec['paths']['/widgets/a']['get']['x-internal'] ?? false) === true, 'Widget routes are internal');
 
+// Language
+check(PlainShow\Kit\Lang::detect('sv', 'nl-NL,nl;q=0.9') === 'sv', 'The ps_lang cookie decides the language');
+check(PlainShow\Kit\Lang::detect(null, 'de-DE,nl;q=0.8,en;q=0.5') === 'nl', 'Otherwise the best supported browser language');
+check(PlainShow\Kit\Lang::detect('xx', 'de-DE') === 'en', 'English when nothing matches');
+check(PlainShow\Kit\Lang::cookieDomain('login.plainshow.se') === 'plainshow.se' && PlainShow\Kit\Lang::cookieDomain('plainshow.se') === 'plainshow.se' && PlainShow\Kit\Lang::cookieDomain('127.0.0.1') === '', 'The language cookie covers every site');
+$dir = sys_get_temp_dir() . '/kit-lang-' . getmypid();
+@mkdir($dir);
+file_put_contents("$dir/nl.json", json_encode(['{n} files' => '{n} bestanden', 'one file' => 'een bestand']));
+PlainShow\Kit\Lang::use('nl');
+PlainShow\Kit\Lang::load($dir);
+check(PlainShow\Kit\Lang::plural(3, 'one file', '{n} files') === '3 bestanden' && PlainShow\Kit\Lang::t('Missing') === 'Missing', 'Texts translate with placeholders and fall back to the source');
+array_map('unlink', glob("$dir/*"));
+rmdir($dir);
+
 echo "Kit checks passed: $checks\n";

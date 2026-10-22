@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+
+- Languages: English, Dutch and Swedish. `Lang` picks the visitor's language (the `ps_lang` cookie shared by every site, else the browser) and translates texts from `<lang>.json` dictionaries; `Lang::menuSwitch()` and `[data-ps-lang]` buttons switch it everywhere.
+- Error and updating pages speak the visitor's language.
+
 ## 1.6.0
 
 - Error pages for 401, 403, 404, 429, 500 and 503, and an "updating" page shown while a service installs a new version (`ui/errors`, made by `php bin/errors.php`).

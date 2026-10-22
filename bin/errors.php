@@ -20,14 +20,44 @@ $pages = [
     'updating' => ['Updating', 'A new version is being installed. This page reloads by itself when it is done.', '503'],
 ];
 
+// Dutch and Swedish, shown when the visitor's language (ps_lang cookie or browser) asks for it.
+$translations = [
+    'nl' => [
+        '401' => ['Eerst inloggen', 'Je moet ingelogd zijn om deze pagina te zien.'],
+        '403' => ['Niet voor jou', 'Je hebt geen toegang tot deze pagina. Vraag een beheerder als je denkt dat dat wel zou moeten.'],
+        '404' => ['Pagina niet gevonden', 'Deze pagina bestaat niet, of is verplaatst.'],
+        '429' => ['Rustig aan', 'Dat waren veel verzoeken in korte tijd. Wacht een minuut en probeer het opnieuw.'],
+        '500' => ['Er ging iets mis', 'Er ging iets mis aan onze kant. Probeer het zo opnieuw.'],
+        '503' => ['Zo terug', 'Deze dienst neemt een korte pauze. Probeer het over een paar minuten opnieuw.'],
+        'updating' => ['Bijwerken', 'Er wordt een nieuwe versie geïnstalleerd. Deze pagina laadt vanzelf opnieuw als het klaar is.'],
+        'back' => 'Terug', 'home' => 'Startpagina', 'soon' => 'Meestal binnen een minuut.',
+    ],
+    'sv' => [
+        '401' => ['Logga in först', 'Du behöver vara inloggad för att se den här sidan.'],
+        '403' => ['Inte för dig', 'Du har inte tillgång till den här sidan. Fråga en administratör om du tycker att du borde ha det.'],
+        '404' => ['Sidan finns inte', 'Den här sidan finns inte, eller så har den flyttats.'],
+        '429' => ['Ta det lugnt', 'Det var många förfrågningar på kort tid. Vänta en minut och försök igen.'],
+        '500' => ['Något gick sönder', 'Något gick fel hos oss. Försök igen om en stund.'],
+        '503' => ['Strax tillbaka', 'Tjänsten tar en kort paus. Försök igen om några minuter.'],
+        'updating' => ['Uppdaterar', 'En ny version installeras. Sidan laddas om av sig själv när det är klart.'],
+        'back' => 'Tillbaka', 'home' => 'Startsidan', 'soon' => 'Oftast inom en minut.',
+    ],
+];
+
 foreach ($pages as $name => [$title, $text, $image]) {
+    $words = [];
+    foreach ($translations as $code => $set) {
+        $words[$code] = ['title' => $set[$name][0], 'text' => $set[$name][1], 'back' => $set['back'], 'home' => $set['home'], 'soon' => $set['soon']];
+    }
+    $words = json_encode($words, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+    $translate = "<script>(function(){var w={$words};var m=document.cookie.match(/(?:^|; )ps_lang=([a-z]+)/);var l=m?m[1]:null;if(!w[l]&&l!=='en'){var a=navigator.languages||[navigator.language||'en'];for(var i=0;i<a.length;i++){var c=String(a[i]).slice(0,2).toLowerCase();if(w[c]||c==='en'){l=c;break;}}}var t=w[l];if(!t)return;document.documentElement.lang=l;document.querySelectorAll('[data-k]').forEach(function(n){var k=n.getAttribute('data-k');if(t[k])n.textContent=t[k];});document.title=t.title+' | PlainShow';})();</script>";
     $code = $name === 'updating' ? '' : $name;
     $refresh = $name === 'updating'
         ? "<script>setInterval(function(){fetch(location.href,{method:'HEAD',cache:'no-store'}).then(function(r){if(r.status!==503)location.reload();}).catch(function(){});},6000);</script>"
         : '';
     $actions = $name === 'updating'
-        ? '<p class="small">Usually under a minute.</p>'
-        : '<div class="actions"><a class="btn" href="javascript:history.back()">Go back</a><a class="btn primary" href="/">Start page</a></div>';
+        ? '<p class="small" data-k="soon">Usually under a minute.</p>'
+        : '<div class="actions"><a class="btn" href="javascript:history.back()" data-k="back">Go back</a><a class="btn primary" href="/" data-k="home">Start page</a></div>';
     $html = <<<HTML
 <!doctype html>
 <html lang="en">
@@ -59,10 +89,11 @@ p{margin:0 0 20px;color:var(--soft)}
 <main>
 <img src="/_errors/{$image}.webp" alt="" width="260" height="260">
 <p class="code">{$code}</p>
-<h1>{$title}</h1>
-<p>{$text}</p>
+<h1 data-k="title">{$title}</h1>
+<p data-k="text">{$text}</p>
 {$actions}
 </main>
+{$translate}
 {$refresh}
 </body>
 </html>

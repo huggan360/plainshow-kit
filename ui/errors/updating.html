@@ -28,10 +28,11 @@ p{margin:0 0 20px;color:var(--soft)}
 <main>
 <img src="/_errors/503.webp" alt="" width="260" height="260">
 <p class="code"></p>
-<h1>Updating</h1>
-<p>A new version is being installed. This page reloads by itself when it is done.</p>
-<p class="small">Usually under a minute.</p>
+<h1 data-k="title">Updating</h1>
+<p data-k="text">A new version is being installed. This page reloads by itself when it is done.</p>
+<p class="small" data-k="soon">Usually under a minute.</p>
 </main>
+<script>(function(){var w={"nl":{"title":"Bijwerken","text":"Er wordt een nieuwe versie geïnstalleerd. Deze pagina laadt vanzelf opnieuw als het klaar is.","back":"Terug","home":"Startpagina","soon":"Meestal binnen een minuut."},"sv":{"title":"Uppdaterar","text":"En ny version installeras. Sidan laddas om av sig själv när det är klart.","back":"Tillbaka","home":"Startsidan","soon":"Oftast inom en minut."}};var m=document.cookie.match(/(?:^|; )ps_lang=([a-z]+)/);var l=m?m[1]:null;if(!w[l]&&l!=='en'){var a=navigator.languages||[navigator.language||'en'];for(var i=0;i<a.length;i++){var c=String(a[i]).slice(0,2).toLowerCase();if(w[c]||c==='en'){l=c;break;}}}var t=w[l];if(!t)return;document.documentElement.lang=l;document.querySelectorAll('[data-k]').forEach(function(n){var k=n.getAttribute('data-k');if(t[k])n.textContent=t[k];});document.title=t.title+' | PlainShow';})();</script>
 <script>setInterval(function(){fetch(location.href,{method:'HEAD',cache:'no-store'}).then(function(r){if(r.status!==503)location.reload();}).catch(function(){});},6000);</script>
 </body>
 </html>

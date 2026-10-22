@@ -6,6 +6,37 @@
     'use strict';
 
     var THEME_KEY = 'plainshow-theme';
+    var LANGS = ['en', 'nl', 'sv'];
+
+    /* Language: the ps_lang cookie (shared by every PlainShow site), else the browser's. */
+    function readCookie(name) {
+        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+    function detectLang() {
+        var chosen = readCookie('ps_lang');
+        if (LANGS.indexOf(chosen) >= 0) return chosen;
+        var wanted = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+        for (var i = 0; i < wanted.length; i++) {
+            var code = String(wanted[i]).slice(0, 2).toLowerCase();
+            if (LANGS.indexOf(code) >= 0) return code;
+        }
+        return 'en';
+    }
+    function cookieDomain(host) {
+        if (/^[\d.]+$/.test(host) || host.indexOf('.') < 0) return '';
+        var labels = host.split('.');
+        return labels.length > 2 ? labels.slice(1).join('.') : host;
+    }
+    function setLang(code) {
+        if (LANGS.indexOf(code) < 0) return;
+        var domain = cookieDomain(location.hostname);
+        document.cookie = 'ps_lang=' + code + '; path=/; max-age=31536000; SameSite=Lax' + (domain ? '; domain=' + domain : '') + (location.protocol === 'https:' ? '; Secure' : '');
+        location.reload();
+    }
+    var lang = document.documentElement.getAttribute('lang');
+    if (LANGS.indexOf(lang) < 0) lang = detectLang();
+    var THEME_WORDS = { en: ['Light theme', 'Dark theme'], nl: ['Licht thema', 'Donker thema'], sv: ['Ljust tema', 'Mörkt tema'] };
 
     function storedTheme() {
         try { return window.localStorage.getItem(THEME_KEY); } catch (error) { return null; }
@@ -15,7 +46,7 @@
         var value = theme === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', value);
         document.querySelectorAll('[data-ps-theme-label]').forEach(function (node) {
-            node.textContent = value === 'light' ? 'Dark theme' : 'Light theme';
+            node.textContent = THEME_WORDS[lang][value === 'light' ? 1 : 0];
         });
     }
 
@@ -52,6 +83,13 @@
             return;
         }
         if (!target.closest('[data-ps-dropdown-menu]')) closeAll(null);
+
+        var langButton = target.closest('[data-ps-lang]');
+        if (langButton) {
+            setLang(langButton.getAttribute('data-ps-lang'));
+            event.preventDefault();
+            return;
+        }
 
         if (target.closest('[data-ps-theme-toggle]')) {
             var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -122,4 +160,17 @@
         window.setTimeout(function () { toast.remove(); }, 4500);
     };
     window.PlainShow.applyTheme = applyTheme;
+    window.PlainShow.lang = lang;
+    window.PlainShow.setLang = setLang;
+    /* Texts for scripts: the page puts its dictionary in window.PS_I18N ({"Source": "Translation"}). */
+    window.PlainShow.t = function (text, params) {
+        var out = (window.PS_I18N && window.PS_I18N[text]) || text;
+        if (params) Object.keys(params).forEach(function (name) { out = out.split('{' + name + '}').join(String(params[name])); });
+        return out;
+    };
+    document.querySelectorAll('[data-ps-lang]').forEach(function (button) {
+        var on = button.getAttribute('data-ps-lang') === lang;
+        button.classList.toggle('is-active', on);
+        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
 })();

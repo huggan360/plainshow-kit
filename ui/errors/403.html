@@ -28,10 +28,11 @@ p{margin:0 0 20px;color:var(--soft)}
 <main>
 <img src="/_errors/403.webp" alt="" width="260" height="260">
 <p class="code">403</p>
-<h1>Not for you</h1>
-<p>You do not have access to this page. Ask an administrator if you think you should.</p>
-<div class="actions"><a class="btn" href="javascript:history.back()">Go back</a><a class="btn primary" href="/">Start page</a></div>
+<h1 data-k="title">Not for you</h1>
+<p data-k="text">You do not have access to this page. Ask an administrator if you think you should.</p>
+<div class="actions"><a class="btn" href="javascript:history.back()" data-k="back">Go back</a><a class="btn primary" href="/" data-k="home">Start page</a></div>
 </main>
+<script>(function(){var w={"nl":{"title":"Niet voor jou","text":"Je hebt geen toegang tot deze pagina. Vraag een beheerder als je denkt dat dat wel zou moeten.","back":"Terug","home":"Startpagina","soon":"Meestal binnen een minuut."},"sv":{"title":"Inte för dig","text":"Du har inte tillgång till den här sidan. Fråga en administratör om du tycker att du borde ha det.","back":"Tillbaka","home":"Startsidan","soon":"Oftast inom en minut."}};var m=document.cookie.match(/(?:^|; )ps_lang=([a-z]+)/);var l=m?m[1]:null;if(!w[l]&&l!=='en'){var a=navigator.languages||[navigator.language||'en'];for(var i=0;i<a.length;i++){var c=String(a[i]).slice(0,2).toLowerCase();if(w[c]||c==='en'){l=c;break;}}}var t=w[l];if(!t)return;document.documentElement.lang=l;document.querySelectorAll('[data-k]').forEach(function(n){var k=n.getAttribute('data-k');if(t[k])n.textContent=t[k];});document.title=t.title+' | PlainShow';})();</script>
 
 </body>
 </html>

@@ -28,10 +28,11 @@ p{margin:0 0 20px;color:var(--soft)}
 <main>
 <img src="/_errors/500.webp" alt="" width="260" height="260">
 <p class="code">500</p>
-<h1>Something broke</h1>
-<p>Something went wrong on our side. Try again in a moment.</p>
-<div class="actions"><a class="btn" href="javascript:history.back()">Go back</a><a class="btn primary" href="/">Start page</a></div>
+<h1 data-k="title">Something broke</h1>
+<p data-k="text">Something went wrong on our side. Try again in a moment.</p>
+<div class="actions"><a class="btn" href="javascript:history.back()" data-k="back">Go back</a><a class="btn primary" href="/" data-k="home">Start page</a></div>
 </main>
+<script>(function(){var w={"nl":{"title":"Er ging iets mis","text":"Er ging iets mis aan onze kant. Probeer het zo opnieuw.","back":"Terug","home":"Startpagina","soon":"Meestal binnen een minuut."},"sv":{"title":"Något gick sönder","text":"Något gick fel hos oss. Försök igen om en stund.","back":"Tillbaka","home":"Startsidan","soon":"Oftast inom en minut."}};var m=document.cookie.match(/(?:^|; )ps_lang=([a-z]+)/);var l=m?m[1]:null;if(!w[l]&&l!=='en'){var a=navigator.languages||[navigator.language||'en'];for(var i=0;i<a.length;i++){var c=String(a[i]).slice(0,2).toLowerCase();if(w[c]||c==='en'){l=c;break;}}}var t=w[l];if(!t)return;document.documentElement.lang=l;document.querySelectorAll('[data-k]').forEach(function(n){var k=n.getAttribute('data-k');if(t[k])n.textContent=t[k];});document.title=t.title+' | PlainShow';})();</script>
 
 </body>
 </html>

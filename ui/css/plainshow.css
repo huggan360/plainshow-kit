@@ -678,3 +678,11 @@ a.ps-chain__item:hover { background: var(--ps-btn-bg-hover); }
     .ps-frame { background: var(--ps-shell); }
     .ps-frame__panel { background: radial-gradient(120% 90% at 0% 100%, var(--ps-glow), transparent 55%), var(--ps-panel); }
 }
+
+/* Language switch in account menus */
+.ps-dropdown__lang { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 10px; color: var(--ps-text-soft); font: var(--ps-text-sm) var(--ps-font-ui); }
+.ps-dropdown__lang > span:not(.ps-lang) { flex: 1; }
+.ps-lang { display: inline-flex; padding: 2px; border-radius: 8px; background: var(--ps-btn-bg); }
+.ps-lang button { min-width: 30px; padding: 3px 6px; border: 0; border-radius: 6px; background: none; color: var(--ps-text-muted); font: 600 11px/1.4 var(--ps-font-ui); letter-spacing: .04em; cursor: pointer; }
+.ps-lang button:hover { color: var(--ps-text); }
+.ps-lang button.is-active { background: var(--ps-panel); color: var(--ps-text); box-shadow: 0 1px 2px rgba(0, 0, 0, .18); }

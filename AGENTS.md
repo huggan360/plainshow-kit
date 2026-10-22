@@ -8,7 +8,8 @@ The kit is the shared library every PlainShow app installs with Composer
 - `src/`: `Identity` (claims of the signed-in person), `OidcClient`,
   `PhpSessionAuth` (sign-in for plain PHP apps), `Jwt`/`Jwks`, `Signed`
   (requests signed by core's gateway), `Widgets` (signed dashboard widgets),
-  `Access` (role and capability rules), `OpenApi`, `Http`.
+  `Access` (role and capability rules), `Lang` (language and translations),
+  `OpenApi`, `Http`.
 - `ui/`: the look. `css/plainshow.css` (all `ps-*` classes and `--ps-*`
   tokens, dark and light), `js/` (backdrop, helpers), `fonts/`, `brand/`
   (logos, icons) and `errors/` (error and updating pages; edit

@@ -77,15 +77,15 @@ foreach (['https://evil.example/', '//evil.example', '/\\evil.example', "/x\r\nL
 
 // Access rules.
 $extensions = [
-    ['id' => 'blog', 'enabled' => true, 'default_access' => ['admin', 'moderator', 'member']],
-    ['id' => 'latex', 'enabled' => true, 'default_access' => ['admin', 'moderator', 'member']],
+    ['id' => 'blog', 'enabled' => true, 'default_access' => ['admin', 'moderator', 'user']],
+    ['id' => 'latex', 'enabled' => true, 'default_access' => ['admin', 'moderator', 'user']],
     ['id' => 'web', 'enabled' => true, 'default_access' => ['admin']],
-    ['id' => 'cloud', 'enabled' => false, 'default_access' => ['admin', 'member']],
+    ['id' => 'cloud', 'enabled' => false, 'default_access' => ['admin', 'user']],
 ];
 $patterns = Access::defaultRolePatterns();
 $admin = Access::resolve('admin', $extensions, [], $patterns['admin'], []);
 check($admin['services'] === ['blog', 'latex', 'web'] && $admin['capabilities'] === ['*'], 'Admin gets every enabled service and *');
-$member = Access::resolve('member', $extensions, ['latex' => 'deny', 'web' => 'allow'], $patterns['member'], ['blog.post.moderate' => 'allow']);
+$member = Access::resolve('user', $extensions, ['latex' => 'deny', 'web' => 'allow'], $patterns['user'], ['blog.post.moderate' => 'allow']);
 check($member['services'] === ['blog', 'web'], 'Member overrides: deny wins, allow adds, disabled stays off');
 check(in_array('blog.post.moderate', $member['capabilities'], true), 'Capability allow is added');
 $moderator = Access::resolve('moderator', $extensions, ['blog' => 'deny'], ['blog.post.moderate'], []);

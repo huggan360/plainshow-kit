@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.0
+
+- Error pages for 401, 403, 404, 429, 500 and 503, and an "updating" page shown while a service installs a new version (`ui/errors`, made by `php bin/errors.php`).
+- AGENTS.md: how the platform, versions and releases work.
+
+## 1.5.0
+
+- Roles: `user` replaces `member`; any role name is accepted.
+
 ## 1.4.0
 
 - Widget requests can name the person's own account in the extension (`Widgets::sign(..., account: ...)`, `Widgets::verifyWithAccount`), signed with the rest. Requests without one are signed exactly as before.

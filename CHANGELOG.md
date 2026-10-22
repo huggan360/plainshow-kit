@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0
+
+- `bin/i18n-check.py` lists the texts an app's language file is missing.
+- AGENTS.md: how languages work across PlainShow.
+
 ## 1.7.0
 
 - Languages: English, Dutch and Swedish. `Lang` picks the visitor's language (the `ps_lang` cookie shared by every site, else the browser) and translates texts from `<lang>.json` dictionaries; `Lang::menuSwitch()` and `[data-ps-lang]` buttons switch it everywhere.

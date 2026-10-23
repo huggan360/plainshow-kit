@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.0
+
+- Backdrop: five embers from deep orange to warm yellow instead of two orange lights. They breathe, change colour slowly, warm the page with a faint haze, glow yellow where they meet, and move away from the pointer so you can chase them (brighter while they flee). Three on phones; still when reduced motion is on.
+
 ## 1.8.0
 
 - `bin/i18n-check.py` lists the texts an app's language file is missing.

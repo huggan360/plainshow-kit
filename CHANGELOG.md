@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.0
+
+- The page heading (`.ps-page-head`) sits in a frame of its own, so it reads well on any backdrop. `.ps-page-head--gradient` gives it the orange ring, for an app's main page.
+
 ## 1.10.0
 
 - Backdrop: large, soft orange blobs that fade in, drift while slowly changing shape, and fade out while others appear. Calmer and less yellow than 1.9, and the light shows only on the glyphs, not on the page between them. They still move away from the pointer.

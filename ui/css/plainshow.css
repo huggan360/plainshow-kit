@@ -432,7 +432,22 @@ a.ps-row:hover .ps-row__title { color: var(--ps-text); text-decoration: underlin
 .ps-topbar__spacer { flex: 1; }
 .ps-content { width: 100%; max-width: 1240px; margin: 0 auto; padding: 32px 28px 64px; }
 .ps-content--wide { max-width: 1600px; }
-.ps-page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+/* The page's title and its actions, in a frame of its own so it reads well on any backdrop.
+   --gradient: the orange ring, for an app's main page. */
+.ps-page-head {
+    position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px;
+    padding: 22px 26px; border: 1px solid var(--ps-shell-border); border-radius: var(--ps-frame-radius);
+    background: radial-gradient(120% 160% at 0% 100%, color-mix(in srgb, var(--ps-accent) 10%, transparent), transparent 60%), color-mix(in srgb, var(--ps-shell) 66%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+}
+.ps-page-head--gradient { border-color: transparent; }
+.ps-page-head--gradient::before {
+    content: ''; position: absolute; inset: 0; padding: 4px; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(115deg, #ffb057 0%, #ff7a1f 29%, #fc5000 61%, #e2330f 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@media (max-width: 700px) { .ps-page-head { padding: 18px 18px; margin-bottom: 18px; } }
 .ps-page-head__title { margin: 0; font-family: var(--ps-font-title); font-size: var(--ps-text-2xl); font-weight: 560; line-height: 1.15; letter-spacing: -.015em; }
 .ps-page-head__text { margin: 6px 0 0; max-width: 62ch; color: var(--ps-text-soft); }
 .ps-page-head__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }

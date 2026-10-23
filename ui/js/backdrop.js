@@ -1,10 +1,10 @@
 /*
  * PlainShow backdrop: the sidebar's glyphs scattered over the page, evenly
- * spaced and turned at random, a shade off the background. A few embers,
- * from deep orange to warm yellow, drift across them and light up the glyphs
- * they pass, with a faint haze around each. They shy away from the pointer:
- * come close and they slip aside, faster and brighter, so you can chase them.
- * Where two meet, the glow adds up and turns more yellow.
+ * spaced and turned at random, a shade off the background. Large soft blobs
+ * of orange light come and go: each fades in somewhere, drifts and slowly
+ * changes shape, then fades out while another appears elsewhere. The light
+ * shows only on the glyphs, never on the page between them. They shy
+ * away from the pointer: come close and they slip aside, so you can chase them.
  *
  * Add <canvas class="ps-backdrop" aria-hidden="true"></canvas> as the first
  * child of <body>, or set data-ps-backdrop on <body> and one is created.
@@ -21,17 +21,11 @@
     var MAX_SIZE = 42;
     var FRAME_MS = 1000 / 30;     // at rest
     var ACTIVE_MS = 1000 / 60;    // while the pointer moves
-    var AVOID = 230;              // how close the pointer may come before an ember moves away
+    var AVOID = 230;              // how close the pointer may come before a blob moves away
     var MAX_SPEED = 1100;         // px per second
 
-    // Each ember: its hue (orange 18 to yellow 46), size, and where on its slow path it starts.
-    var EMBERS = [
-        { hue: 20, radius: 340, phase: 0.3 },
-        { hue: 34, radius: 280, phase: 1.7 },
-        { hue: 44, radius: 210, phase: 3.1 },
-        { hue: 26, radius: 300, phase: 4.4 },
-        { hue: 40, radius: 180, phase: 5.6 }
-    ];
+    var BLOBS = 5;                // three on phones
+    var HUES = [17, 21, 25, 29];  // deep orange to amber; never quite yellow
 
     function start(canvas) {
         var ctx = canvas.getContext('2d');
@@ -51,7 +45,7 @@
         var pointer = null;
         var pointerAt = 0;
         var frame = 0;
-        var embers = [];
+        var blobs = [];
 
         function characters() {
             var names = {};
@@ -108,7 +102,7 @@
                     });
                 }
             }
-            if (embers.length !== (width < 700 ? 3 : EMBERS.length)) placeEmbers();
+            if (blobs.length !== (width < 700 ? 3 : BLOBS)) placeBlobs();
             paintGlyphs();
         }
 
@@ -133,71 +127,95 @@
             draw();
         }
 
-        // Where an ember wants to be: slow overlapping waves, so the path never quite repeats.
-        function home(index, t) {
-            var a = EMBERS[index].phase;
-            return {
-                x: width * (0.5 + 0.4 * Math.sin(t * 0.11 + a) + 0.1 * Math.sin(t * 0.27 + a * 2)),
-                y: height * (0.5 + 0.38 * Math.cos(t * 0.09 + a * 1.3) + 0.1 * Math.sin(t * 0.23 + a))
-            };
+        function rand(min, max) { return min + Math.random() * (max - min); }
+
+        // A new blob somewhere on the screen, away from the pointer and the other blobs.
+        function spawn(blob, age) {
+            var best = null, bestScore = -1;
+            for (var tries = 0; tries < 8; tries++) {
+                var x = rand(0.05, 0.95) * width, y = rand(0.05, 0.95) * height, score = Infinity;
+                blobs.forEach(function (o) { if (o !== blob) score = Math.min(score, Math.hypot(o.x - x, o.y - y)); });
+                if (pointer) score = Math.min(score, Math.hypot(pointer.x - x, pointer.y - y) * 1.5);
+                if (score > bestScore) { bestScore = score; best = { x: x, y: y }; }
+            }
+            var small = width < 700;
+            var heading = rand(0, Math.PI * 2);
+            blob.x = best.x; blob.y = best.y; blob.vx = 0; blob.vy = 0;
+            blob.heading = heading;
+            blob.turn = rand(-0.12, 0.12);                 // radians per second, so paths curve
+            blob.speed = rand(14, 34);                     // px per second
+            blob.radius = small ? rand(240, 360) : rand(380, 580);
+            blob.hue = HUES[Math.floor(Math.random() * HUES.length)];
+            blob.life = rand(16, 28);                      // seconds from fading in to gone
+            blob.age = age || 0;
+            blob.seed = rand(0, 100);
+            blob.heat = 0;
         }
 
-        function placeEmbers() {
-            var count = width < 700 ? 3 : EMBERS.length;
-            var scale = width < 700 ? 0.75 : 1;
-            embers = [];
+        function placeBlobs() {
+            var count = width < 700 ? 3 : BLOBS;
+            blobs = [];
             for (var i = 0; i < count; i++) {
-                var p = home(i, time);
-                embers.push({ x: p.x, y: p.y, vx: 0, vy: 0, heat: 0, hue: EMBERS[i].hue, radius: EMBERS[i].radius * scale, spin: i % 2 ? 1 : -1 });
+                var blob = {};
+                blobs.push(blob);
+                // Start at different points of their lives, so they never all fade together.
+                spawn(blob, 0);
+                blob.age = blob.life * (0.2 + 0.6 * i / count);
             }
         }
 
-        // Pulled home by a soft spring, pushed away by the pointer (and a little sideways, so
-        // they slip around it instead of getting stuck), and kept apart from each other.
+        // How visible a blob is over its life: a slow fade in, a while at full, a slow fade out.
+        function presence(blob) {
+            var t = blob.age / blob.life;
+            var ease = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+            return ease(t / 0.3) * ease((1 - t) / 0.35);
+        }
+
         function move(dt) {
             var chasing = pointer && performance.now() - pointerAt < 4000;
-            embers.forEach(function (e, i) {
-                var target = home(i, time);
-                var ax = (target.x - e.x) * 0.9;
-                var ay = (target.y - e.y) * 0.9;
+            blobs.forEach(function (e, i) {
+                e.age += dt;
+                if (e.age >= e.life) { spawn(e, 0); return; }
+                e.heading += e.turn * dt;
+                // Steer towards the drift, pushed by the pointer and away from other blobs.
+                var ax = (Math.cos(e.heading) * e.speed - e.vx) * 1.2;
+                var ay = (Math.sin(e.heading) * e.speed - e.vy) * 1.2;
                 var fleeing = 0;
                 if (chasing) {
                     var dx = e.x - pointer.x, dy = e.y - pointer.y;
                     var d = Math.hypot(dx, dy);
-                    var reach = AVOID + e.radius * 0.25;
+                    var reach = AVOID + e.radius * 0.3;
                     if (d < reach) {
                         if (d < 1) { dx = Math.cos(i * 2.4); dy = Math.sin(i * 2.4); d = 1; }
-                        var push = Math.pow(1 - d / reach, 1.6) * 5200;
-                        ax += (dx / d + (-dy / d) * 0.55 * e.spin) * push;
-                        ay += (dy / d + (dx / d) * 0.55 * e.spin) * push;
+                        var push = Math.pow(1 - d / reach, 1.6) * 4200;
+                        var side = i % 2 ? 1 : -1;
+                        ax += (dx / d - dy / d * 0.55 * side) * push;
+                        ay += (dy / d + dx / d * 0.55 * side) * push;
                         fleeing = 1 - d / reach;
                     }
                 }
-                embers.forEach(function (o) {
+                blobs.forEach(function (o) {
                     if (o === e) return;
                     var ox = e.x - o.x, oy = e.y - o.y;
                     var od = Math.hypot(ox, oy) || 1;
-                    if (od < 180) {
-                        ax += ox / od * (180 - od) * 3;
-                        ay += oy / od * (180 - od) * 3;
-                    }
+                    var room = (e.radius + o.radius) * 0.45;
+                    if (od < room) { ax += ox / od * (room - od) * 0.6; ay += oy / od * (room - od) * 0.6; }
                 });
-                // Soft walls: an ember may half leave the screen, then turns back.
-                var m = e.radius * 0.4;
-                if (e.x < -m) ax += (-m - e.x) * 8;
-                if (e.x > width + m) ax -= (e.x - width - m) * 8;
-                if (e.y < -m) ay += (-m - e.y) * 8;
-                if (e.y > height + m) ay -= (e.y - height - m) * 8;
+                // Soft walls: the middle of a blob stays on the screen.
+                if (e.x < 0) { ax -= e.x * 3; }
+                if (e.x > width) { ax -= (e.x - width) * 3; }
+                if (e.y < 0) { ay -= e.y * 3; }
+                if (e.y > height) { ay -= (e.y - height) * 3; }
 
-                e.vx = (e.vx + ax * dt) * Math.exp(-1.8 * dt);
-                e.vy = (e.vy + ay * dt) * Math.exp(-1.8 * dt);
+                e.vx = (e.vx + ax * dt) * Math.exp(-1.6 * dt);
+                e.vy = (e.vy + ay * dt) * Math.exp(-1.6 * dt);
                 var speed = Math.hypot(e.vx, e.vy);
                 if (speed > MAX_SPEED) { e.vx *= MAX_SPEED / speed; e.vy *= MAX_SPEED / speed; speed = MAX_SPEED; }
                 e.x += e.vx * dt;
                 e.y += e.vy * dt;
-                // Heat: a chased ember glows brighter and more yellow, then cools down.
-                var want = Math.max(fleeing, Math.min(speed / 700, 1));
-                e.heat += (want - e.heat) * Math.min(1, dt * (want > e.heat ? 6 : 1.2));
+                // A chased blob warms up a little, then calms down.
+                var want = Math.max(fleeing, Math.min(speed / 900, 1));
+                e.heat += (want - e.heat) * Math.min(1, dt * (want > e.heat ? 5 : 1));
             });
         }
 
@@ -205,21 +223,30 @@
             return 'hsla(' + h.toFixed(1) + ', ' + s + '%, ' + l + '%, ' + a.toFixed(3) + ')';
         }
 
+        // A blob is three soft lobes circling its middle at different speeds, so its shape keeps changing.
+        function lobes(e) {
+            var out = [];
+            for (var k = 0; k < 3; k++) {
+                var spin = (k === 1 ? -1 : 1) * (0.09 + k * 0.04);
+                var angle = e.seed + k * 2.1 + time * spin;
+                var reach = e.radius * (0.22 + 0.12 * Math.sin(time * 0.13 + e.seed + k));
+                out.push({
+                    x: e.x + Math.cos(angle) * reach,
+                    y: e.y + Math.sin(angle) * reach * 0.8,
+                    r: e.radius * (0.62 + 0.14 * Math.sin(time * 0.17 + e.seed * 2 + k * 1.7))
+                });
+            }
+            return out;
+        }
+
         function draw() {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // A faint haze around each ember, so the glow also warms the page between the glyphs.
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            embers.forEach(function (e, i) {
-                var h = e.hue + 8 * Math.sin(time * 0.5 + i) + e.heat * 10;
-                var r = e.radius * (1.5 + 0.08 * Math.sin(time * 0.8 + i * 1.9));
-                var g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
-                g.addColorStop(0, hsla(h, 100, 55, (dark ? 0.085 : 0.07) * (1 + e.heat)));
-                g.addColorStop(1, hsla(h - 8, 100, 50, 0));
-                ctx.fillStyle = g;
-                ctx.fillRect(e.x - r, e.y - r, r * 2, r * 2);
+            var shapes = blobs.map(function (e) {
+                var h = e.hue + 3 * Math.sin(time * 0.3 + e.seed) + e.heat * 4;
+                return { e: e, h: h, alpha: presence(e) * (1 + e.heat * 0.25), lobes: lobes(e) };
             });
+
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.drawImage(base, 0, 0);
 
@@ -227,26 +254,23 @@
             l.setTransform(dpr, 0, 0, dpr, 0, 0);
             l.globalCompositeOperation = 'source-over';
             l.clearRect(0, 0, width, height);
-            // Overlapping embers add up in the dark theme, so where they meet it burns yellow.
-            l.globalCompositeOperation = dark ? 'lighter' : 'source-over';
-            embers.forEach(function (e, i) {
-                // Each ember breathes and its colour wanders between orange and yellow.
-                var h = e.hue + 8 * Math.sin(time * 0.5 + i) + e.heat * 10;
-                var r = e.radius * (1 + 0.1 * Math.sin(time * 0.8 + i * 1.9) + e.heat * 0.15);
-                var k = 1 + e.heat * 0.5;
-                var g = l.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
-                if (dark) {
-                    g.addColorStop(0, hsla(h + 12, 100, 68, Math.min(0.8 * k, 1)));
-                    g.addColorStop(0.28, hsla(h + 4, 100, 58, 0.55 * k));
-                    g.addColorStop(0.62, hsla(h - 4, 100, 50, 0.22 * k));
-                } else {
-                    g.addColorStop(0, hsla(Math.min(h + 6, 40), 100, 48, Math.min(0.6 * k, 0.9)));
-                    g.addColorStop(0.3, hsla(h, 100, 47, 0.38 * k));
-                    g.addColorStop(0.62, hsla(h - 4, 100, 45, 0.14 * k));
-                }
-                g.addColorStop(1, hsla(h - 8, 100, 50, 0));
-                l.fillStyle = g;
-                l.fillRect(e.x - r, e.y - r, r * 2, r * 2);
+            shapes.forEach(function (s) {
+                if (s.alpha < 0.005) return;
+                s.lobes.forEach(function (o) {
+                    var g = l.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
+                    if (dark) {
+                        g.addColorStop(0, hsla(s.h + 4, 100, 58, 0.42 * s.alpha));
+                        g.addColorStop(0.4, hsla(s.h, 100, 52, 0.24 * s.alpha));
+                        g.addColorStop(0.75, hsla(s.h - 3, 100, 48, 0.08 * s.alpha));
+                    } else {
+                        g.addColorStop(0, hsla(s.h + 2, 100, 46, 0.34 * s.alpha));
+                        g.addColorStop(0.4, hsla(s.h, 100, 45, 0.18 * s.alpha));
+                        g.addColorStop(0.75, hsla(s.h - 3, 100, 44, 0.06 * s.alpha));
+                    }
+                    g.addColorStop(1, hsla(s.h - 4, 100, 48, 0));
+                    l.fillStyle = g;
+                    l.fillRect(o.x - o.r, o.y - o.r, o.r * 2, o.r * 2);
+                });
             });
             l.setTransform(1, 0, 0, 1, 0, 0);
             l.globalCompositeOperation = 'destination-in';

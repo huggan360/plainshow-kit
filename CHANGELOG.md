@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.1
+
+- The page heading is a real frame: the glass shell with the inner panel, as `.ps-frame` and `.ps-frame__panel`, drawn by `.ps-page-head` alone. `--gradient` puts the orange ring around the inner panel, as on widgets.
+
 ## 1.11.0
 
 - The page heading (`.ps-page-head`) sits in a frame of its own, so it reads well on any backdrop. `.ps-page-head--gradient` gives it the orange ring, for an app's main page.

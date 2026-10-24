@@ -105,6 +105,11 @@ final class Lang
         if (filter_var($host, FILTER_VALIDATE_IP) || !str_contains($host, '.')) {
             return '';
         }
+        // The platform's own domain, when the host is on it (any length: example.co.uk).
+        $domain = Platform::domain();
+        if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+            return $domain;
+        }
         $labels = explode('.', $host);
 
         return count($labels) > 2 ? implode('.', array_slice($labels, 1)) : $host;

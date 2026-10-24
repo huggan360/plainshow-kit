@@ -16,10 +16,15 @@ final class OidcClient
     private readonly Jwks $jwks;
 
     /**
-     * @param array{issuer: string, client_id: string, client_secret: string, redirect_uri: string, scopes?: string, cache_dir?: string} $config
+     * Without `issuer` the platform's Login is used; without `redirect_uri`,
+     * `/auth/callback` on the platform address of `extension`.
+     *
+     * @param array{issuer?: string, client_id: string, client_secret: string, redirect_uri?: string, extension?: string, scopes?: string, cache_dir?: string} $config
      */
-    public function __construct(private readonly array $config)
+    public function __construct(private array $config)
     {
+        $this->config = self::withPlatform($config);
+        $config = $this->config;
         foreach (['issuer', 'client_id', 'client_secret', 'redirect_uri'] as $key) {
             if (empty($config[$key])) {
                 throw new KitException("PlainShow sign-in is missing its $key setting.");
@@ -27,6 +32,22 @@ final class OidcClient
         }
         $cache = rtrim($config['cache_dir'] ?? sys_get_temp_dir(), '/') . '/plainshow-jwks-' . substr(hash('sha256', $config['issuer']), 0, 12) . '.json';
         $this->jwks = new Jwks($this->endpoint('/oauth/jwks'), $cache);
+    }
+
+    /** Fills in the addresses a sign-in config leaves out from the platform file. */
+    public static function withPlatform(array $config): array
+    {
+        if (empty($config['issuer'])) {
+            $config['issuer'] = Platform::url('login') ?? '';
+        }
+        if (empty($config['redirect_uri']) && !empty($config['extension']) && Platform::url($config['extension'])) {
+            $config['redirect_uri'] = Platform::url($config['extension']) . '/auth/callback';
+        }
+        if (empty($config['core_url'])) {
+            $config['core_url'] = Platform::url('core') ?? '';
+        }
+
+        return $config;
     }
 
     public function issuer(): string { return rtrim($this->config['issuer'], '/'); }

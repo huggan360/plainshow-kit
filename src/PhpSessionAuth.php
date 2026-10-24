@@ -28,9 +28,10 @@ final class PhpSessionAuth
     /**
      * @param array{issuer: string, client_id: string, client_secret: string, redirect_uri: string, scopes?: string, cache_dir?: string, extension: string, max_age?: int} $config
      */
-    public function __construct(private readonly array $config, ?callable $onLogin = null, ?callable $onLogout = null)
+    public function __construct(private array $config, ?callable $onLogin = null, ?callable $onLogout = null)
     {
-        $this->client = new OidcClient($config);
+        $this->config = OidcClient::withPlatform($config);
+        $this->client = new OidcClient($this->config);
         $this->onLogin = $onLogin;
         $this->onLogout = $onLogout;
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -175,7 +176,7 @@ final class PhpSessionAuth
         header('Content-Type: text/html; charset=utf-8');
         header('Cache-Control: no-store');
         $safe = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
-        $home = htmlspecialchars(rtrim((string) ($this->config['core_url'] ?? 'https://plainshow.se'), '/') . '/', ENT_QUOTES, 'UTF-8');
+        $home = htmlspecialchars(rtrim((string) ($this->config['core_url'] ?: Platform::require('core')), '/') . '/', ENT_QUOTES, 'UTF-8');
         echo <<<HTML
             <!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
             <title>PlainShow</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#151515;color:#f0efec;font:15px/1.5 system-ui,sans-serif;padding:16px}

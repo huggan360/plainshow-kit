@@ -16,6 +16,7 @@ use PlainShow\Kit\Jwks;
 use PlainShow\Kit\Jwt;
 use PlainShow\Kit\KitException;
 use PlainShow\Kit\OidcClient;
+use PlainShow\Kit\Platform;
 use PlainShow\Kit\Signed;
 
 $checks = 0;
@@ -141,6 +142,26 @@ check(PlainShow\Kit\Lang::detect('sv', 'nl-NL,nl;q=0.9') === 'sv', 'The ps_lang 
 check(PlainShow\Kit\Lang::detect(null, 'de-DE,nl;q=0.8,en;q=0.5') === 'nl', 'Otherwise the best supported browser language');
 check(PlainShow\Kit\Lang::detect('xx', 'de-DE') === 'en', 'English when nothing matches');
 check(PlainShow\Kit\Lang::cookieDomain('login.plainshow.se') === 'plainshow.se' && PlainShow\Kit\Lang::cookieDomain('plainshow.se') === 'plainshow.se' && PlainShow\Kit\Lang::cookieDomain('127.0.0.1') === '', 'The language cookie covers every site');
+
+// The platform file: addresses from the installer, plainshow.se without one.
+putenv('PLAINSHOW_PLATFORM=/nonexistent/platform.json');
+Platform::reset();
+check(Platform::url('split') === 'https://split.plainshow.se' && Platform::domain() === 'plainshow.se', 'Without a platform file the addresses are plainshow.se\'s');
+$platformFile = tempnam(sys_get_temp_dir(), 'platform');
+file_put_contents($platformFile, json_encode(['domain' => 'example.co.uk', 'urls' => ['core' => 'https://example.co.uk/', 'login' => 'https://id.example.co.uk', 'split' => 'https://money.example.co.uk'], 'system' => ['web_user' => 'apache']]));
+putenv("PLAINSHOW_PLATFORM=$platformFile");
+Platform::reset();
+check(Platform::url('core') === 'https://example.co.uk' && Platform::host('login') === 'id.example.co.uk', 'Addresses come from the platform file');
+check(Platform::url('blog') === null && !Platform::installed('blog') && array_keys(Platform::urls()) === ['core', 'login', 'split'], 'Apps that are not installed have no address');
+check(Platform::system('web_user') === 'apache' && Platform::system('missing', 'x') === 'x', 'System facts have defaults');
+check(Platform::ownsHost('money.example.co.uk') && Platform::ownsHost('example.co.uk:443') && !Platform::ownsHost('evil.example.com'), 'Hosts of this platform are known');
+check(PlainShow\Kit\Lang::cookieDomain('money.example.co.uk') === 'example.co.uk', 'The language cookie follows the platform domain');
+$oidc = OidcClient::withPlatform(['client_id' => '1', 'client_secret' => 'x', 'extension' => 'split']);
+check($oidc['issuer'] === 'https://id.example.co.uk' && $oidc['redirect_uri'] === 'https://money.example.co.uk/auth/callback' && $oidc['core_url'] === 'https://example.co.uk', 'Sign-in addresses come from the platform');
+check(OidcClient::withPlatform(['issuer' => 'https://a.test', 'redirect_uri' => 'https://b.test/cb'])['issuer'] === 'https://a.test', 'A config that names its addresses keeps them');
+unlink($platformFile);
+putenv('PLAINSHOW_PLATFORM');
+Platform::reset();
 $dir = sys_get_temp_dir() . '/kit-lang-' . getmypid();
 @mkdir($dir);
 file_put_contents("$dir/nl.json", json_encode(['{n} files' => '{n} bestanden', 'one file' => 'een bestand']));

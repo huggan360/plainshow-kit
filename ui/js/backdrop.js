@@ -27,10 +27,10 @@
     var BLOBS = 5;                // three on phones
     var SPREAD = [0, 4, 8, 12];   // each blob a few degrees off the theme's hue (orange: deep orange to amber)
 
-    /** The theme colour's hue, from the stylesheet (data-accent on <html>). */
-    function themeHue() {
-        var value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ps-backdrop-hue'));
-        return isNaN(value) ? 17 : value;
+    /** A number from the stylesheet for the theme colour (data-accent on <html>). */
+    function themeNumber(name, fallback) {
+        var value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+        return isNaN(value) ? fallback : value;
     }
 
     function start(canvas) {
@@ -52,9 +52,11 @@
         var pointerAt = 0;
         var frame = 0;
         var blobs = [];
-        var hue = themeHue();
+        // The theme colour's hue, and how strong its light is (bright colours such as teal are toned down to match orange).
+        var hue = themeNumber('--ps-backdrop-hue', 17);
+        var strength = themeNumber('--ps-backdrop-strength', 1);
         // A new theme colour shows at once, on the lights already there too.
-        new MutationObserver(function () { hue = themeHue(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
+        new MutationObserver(function () { hue = themeNumber('--ps-backdrop-hue', 17); strength = themeNumber('--ps-backdrop-strength', 1); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
 
         function characters() {
             var names = {};
@@ -268,13 +270,13 @@
                 s.lobes.forEach(function (o) {
                     var g = l.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
                     if (dark) {
-                        g.addColorStop(0, hsla(s.h + 4, 100, 58, 0.42 * s.alpha));
-                        g.addColorStop(0.4, hsla(s.h, 100, 52, 0.24 * s.alpha));
-                        g.addColorStop(0.75, hsla(s.h - 3, 100, 48, 0.08 * s.alpha));
+                        g.addColorStop(0, hsla(s.h + 4, 100, 58, 0.42 * strength * s.alpha));
+                        g.addColorStop(0.4, hsla(s.h, 100, 52, 0.24 * strength * s.alpha));
+                        g.addColorStop(0.75, hsla(s.h - 3, 100, 48, 0.08 * strength * s.alpha));
                     } else {
-                        g.addColorStop(0, hsla(s.h + 2, 100, 46, 0.34 * s.alpha));
-                        g.addColorStop(0.4, hsla(s.h, 100, 45, 0.18 * s.alpha));
-                        g.addColorStop(0.75, hsla(s.h - 3, 100, 44, 0.06 * s.alpha));
+                        g.addColorStop(0, hsla(s.h + 2, 100, 46, 0.34 * strength * s.alpha));
+                        g.addColorStop(0.4, hsla(s.h, 100, 45, 0.18 * strength * s.alpha));
+                        g.addColorStop(0.75, hsla(s.h - 3, 100, 44, 0.06 * strength * s.alpha));
                     }
                     g.addColorStop(1, hsla(s.h - 4, 100, 48, 0));
                     l.fillStyle = g;

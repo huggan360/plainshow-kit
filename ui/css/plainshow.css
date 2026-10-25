@@ -145,25 +145,25 @@
     --ps-accent: #0ea5a0; --ps-accent-rgb: 14, 165, 160; --ps-accent-hover: #19bdb7; --ps-accent-fg: #ffffff;
     --ps-accent-on-dark: #3fd6cf; --ps-accent-on-light: #0b7470;
     --ps-g1: #8ff0dc; --ps-g2: #34d1bf; --ps-g3: #0ea5a0; --ps-g4: #0b6f86; --ps-g-light: #5fe3cf;
-    --ps-logo-filter: hue-rotate(160deg) saturate(.92) brightness(.92); --ps-backdrop-hue: 176;
+    --ps-logo-filter: hue-rotate(160deg) saturate(.92) brightness(.92); --ps-backdrop-hue: 176; --ps-backdrop-strength: 0.55;
 }
 [data-accent='indigo'] {
     --ps-accent: #6a5cf6; --ps-accent-rgb: 106, 92, 246; --ps-accent-hover: #7f73ff; --ps-accent-fg: #ffffff;
     --ps-accent-on-dark: #a99fff; --ps-accent-on-light: #4b3fd1;
     --ps-g1: #b5c2ff; --ps-g2: #8a8cff; --ps-g3: #6a5cf6; --ps-g4: #4a2fc9; --ps-g-light: #9a90ff;
-    --ps-logo-filter: hue-rotate(232deg) saturate(.85); --ps-backdrop-hue: 246;
+    --ps-logo-filter: hue-rotate(232deg) saturate(.85); --ps-backdrop-hue: 246; --ps-backdrop-strength: 0.85;
 }
 [data-accent='red'] {
     --ps-accent: #e5263f; --ps-accent-rgb: 229, 38, 63; --ps-accent-hover: #f03e52; --ps-accent-fg: #ffffff;
     --ps-accent-on-dark: #ff6f7e; --ps-accent-on-light: #b3162c;
     --ps-g1: #ffa58f; --ps-g2: #ff5e62; --ps-g3: #e5263f; --ps-g4: #a8102e; --ps-g-light: #ff7a7a;
-    --ps-logo-filter: hue-rotate(-24deg) saturate(1.05); --ps-backdrop-hue: 352;
+    --ps-logo-filter: hue-rotate(-24deg) saturate(1.05); --ps-backdrop-hue: 352; --ps-backdrop-strength: 0.9;
 }
 [data-accent='yellow'] {
     --ps-accent: #f2b705; --ps-accent-rgb: 242, 183, 5; --ps-accent-hover: #ffc828; --ps-accent-fg: #2f2e2b;
     --ps-accent-on-dark: #ffcf3d; --ps-accent-on-light: #8a6200;
     --ps-g1: #fff09a; --ps-g2: #ffd84a; --ps-g3: #f2b705; --ps-g4: #d98a00; --ps-g-light: #ffd95a;
-    --ps-logo-filter: hue-rotate(38deg) saturate(1.5) brightness(1.45); --ps-backdrop-hue: 44;
+    --ps-logo-filter: hue-rotate(38deg) saturate(1.5) brightness(1.45); --ps-backdrop-hue: 44; --ps-backdrop-strength: 0.55;
 }
 
 /* What follows from the theme colour, worked out again wherever a theme or a

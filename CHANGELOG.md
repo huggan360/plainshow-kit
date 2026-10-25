@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.13.1
+
+- The backdrop's light is as gentle in every theme colour as in orange: teal and yellow, which look brighter, are toned down.
+
 ## v1.13.0
 
 - Theme colours: PlainShow orange, or teal, indigo, red or yellow, chosen in the dashboard's Design studio and shared by every site (the `ps_accent` cookie, `Theme`). Buttons, links, focus, rings, gradients, the gradient frame, the logo, the icon, the backdrop's light and the error pages all follow it.

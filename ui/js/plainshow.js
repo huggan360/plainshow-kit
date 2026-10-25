@@ -34,6 +34,13 @@
         document.cookie = 'ps_lang=' + code + '; path=/; max-age=31536000; SameSite=Lax' + (domain ? '; domain=' + domain : '') + (location.protocol === 'https:' ? '; Secure' : '');
         location.reload();
     }
+    /* Theme colour: the ps_accent cookie, shared by every PlainShow site. The
+       server normally puts data-accent on <html> already (no flash of orange). */
+    var ACCENTS = ['orange', 'teal', 'indigo', 'red', 'yellow'];
+    var accent = readCookie('ps_accent');
+    if (ACCENTS.indexOf(accent) >= 0 && !document.documentElement.hasAttribute('data-accent')) {
+        document.documentElement.setAttribute('data-accent', accent);
+    }
     var lang = document.documentElement.getAttribute('lang');
     if (LANGS.indexOf(lang) < 0) lang = detectLang();
     var THEME_WORDS = { en: ['Light theme', 'Dark theme'], nl: ['Licht thema', 'Donker thema'], sv: ['Ljust tema', 'Mörkt tema'] };

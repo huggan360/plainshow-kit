@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.13.0
+
+- Theme colours: PlainShow orange, or teal, indigo, red or yellow, chosen in the dashboard's Design studio and shared by every site (the `ps_accent` cookie, `Theme`). Buttons, links, focus, rings, gradients, the gradient frame, the logo, the icon, the backdrop's light and the error pages all follow it.
+- Bree Serif is the serif for titles.
+- Text in five greys (`--ps-text-strong` to `--ps-text-faint`); the light theme's text is dark grey, never black.
+- The gradient frame (`.ps-frame--gradient`) is the real one: the glass shell with a gradient ring around the inner panel, as page headings.
+
 ## v1.12.0
 
 - `Platform`: every app's address and a few server facts come from `/etc/plainshow/platform.json`, so PlainShow runs on any domain. Sign-in fills in Login's address and the return address from it, and the language cookie follows the platform's domain.

@@ -17,6 +17,7 @@ use PlainShow\Kit\Jwt;
 use PlainShow\Kit\KitException;
 use PlainShow\Kit\OidcClient;
 use PlainShow\Kit\Platform;
+use PlainShow\Kit\Theme;
 use PlainShow\Kit\Signed;
 
 $checks = 0;
@@ -162,6 +163,16 @@ check(OidcClient::withPlatform(['issuer' => 'https://a.test', 'redirect_uri' => 
 unlink($platformFile);
 putenv('PLAINSHOW_PLATFORM');
 Platform::reset();
+
+// The theme colour: the ps_accent cookie when it names a colour, else orange.
+unset($_COOKIE['ps_accent']);
+check(Theme::accent() === 'orange' && Theme::attributes() === '', 'Orange without a choice, and no attribute for it');
+$_COOKIE['ps_accent'] = 'teal';
+check(Theme::accent() === 'teal' && Theme::attributes() === ' data-accent="teal"', 'A chosen colour reaches <html>');
+$_COOKIE['ps_accent'] = '"><script>';
+check(Theme::accent() === 'orange' && Theme::attributes() === '', 'Anything else in the cookie is ignored');
+check(Theme::attributes('indigo') === ' data-accent="indigo"' && array_keys(Theme::ACCENTS) === ['orange', 'teal', 'indigo', 'red', 'yellow'], 'The five colours');
+unset($_COOKIE['ps_accent']);
 $dir = sys_get_temp_dir() . '/kit-lang-' . getmypid();
 @mkdir($dir);
 file_put_contents("$dir/nl.json", json_encode(['{n} files' => '{n} bestanden', 'one file' => 'een bestand']));

@@ -1,7 +1,7 @@
 /*
  * PlainShow backdrop: the sidebar's glyphs scattered over the page, evenly
  * spaced and turned at random, a shade off the background. Large soft blobs
- * of orange light come and go: each fades in somewhere, drifts and slowly
+ * of light in the theme colour (--ps-backdrop-hue, orange by default) come and go: each fades in somewhere, drifts and slowly
  * changes shape, then fades out while another appears elsewhere. The light
  * shows only on the glyphs, never on the page between them. They shy
  * away from the pointer: come close and they slip aside, so you can chase them.
@@ -25,7 +25,13 @@
     var MAX_SPEED = 1100;         // px per second
 
     var BLOBS = 5;                // three on phones
-    var HUES = [17, 21, 25, 29];  // deep orange to amber; never quite yellow
+    var SPREAD = [0, 4, 8, 12];   // each blob a few degrees off the theme's hue (orange: deep orange to amber)
+
+    /** The theme colour's hue, from the stylesheet (data-accent on <html>). */
+    function themeHue() {
+        var value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ps-backdrop-hue'));
+        return isNaN(value) ? 17 : value;
+    }
 
     function start(canvas) {
         var ctx = canvas.getContext('2d');
@@ -46,6 +52,9 @@
         var pointerAt = 0;
         var frame = 0;
         var blobs = [];
+        var hue = themeHue();
+        // A new theme colour shows at once, on the lights already there too.
+        new MutationObserver(function () { hue = themeHue(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-accent'] });
 
         function characters() {
             var names = {};
@@ -145,7 +154,7 @@
             blob.turn = rand(-0.12, 0.12);                 // radians per second, so paths curve
             blob.speed = rand(14, 34);                     // px per second
             blob.radius = small ? rand(240, 360) : rand(380, 580);
-            blob.hue = HUES[Math.floor(Math.random() * HUES.length)];
+            blob.hue = SPREAD[Math.floor(Math.random() * SPREAD.length)];
             blob.life = rand(16, 28);                      // seconds from fading in to gone
             blob.age = age || 0;
             blob.seed = rand(0, 100);
@@ -243,7 +252,7 @@
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             var shapes = blobs.map(function (e) {
-                var h = e.hue + 3 * Math.sin(time * 0.3 + e.seed) + e.heat * 4;
+                var h = hue + e.hue + 3 * Math.sin(time * 0.3 + e.seed) + e.heat * 4;
                 return { e: e, h: h, alpha: presence(e) * (1 + e.heat * 0.25), lobes: lobes(e) };
             });
 

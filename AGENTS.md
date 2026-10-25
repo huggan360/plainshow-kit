@@ -9,7 +9,8 @@ The kit is the shared library every PlainShow app installs with Composer
   `PhpSessionAuth` (sign-in for plain PHP apps), `Jwt`/`Jwks`, `Signed`
   (requests signed by core's gateway), `Widgets` (signed dashboard widgets),
   `Access` (role and capability rules), `Lang` (language and translations),
-  `OpenApi`, `Http`, `Platform` (the address of every installed app and
+  `OpenApi`, `Http`, `Theme` (the theme colour: the `ps_accent` cookie, orange
+  by default; layouts print `Theme::attributes()` on `<html>`), `Platform` (the address of every installed app and
   facts about the server, from `/etc/plainshow/platform.json`, which the
   installer writes; plainshow.se's layout without it). Never write an app's
   address into code: use `Platform::url('split')`.
@@ -89,8 +90,12 @@ domain); every address comes from `/etc/plainshow/platform.json` (kit `Platform`
 - UI text: short and plain; never use the middle dot character as a
   separator.
 
-- Design: kit CSS (`ps-*` classes, `--ps-*` tokens), Outfit for UI text, the
-  serif for titles, brand orange `#FC5000`, nested "frame" boxes.
+- Design: kit CSS (`ps-*` classes, `--ps-*` tokens), Outfit for UI text, Bree
+  Serif for titles, nested "frame" boxes. The primary colour is a theme colour
+  (orange `#FC5000` by default, or teal, indigo, red, yellow): use `--ps-accent`,
+  `--ps-accent-text`, `--ps-gradient` and `--ps-gradient-ring`, never a fixed
+  orange. Text uses `--ps-text-strong` (titles), `--ps-text`, `--ps-text-soft`,
+  `--ps-text-muted`, `--ps-text-faint`: dark greys in the light theme, never black.
 - Secrets: never commit `.env`, `config/*.php` with credentials, keys or
   tokens, and never print them in logs or output.
 - Test what you change with the repo's own tests (below) before tagging.
